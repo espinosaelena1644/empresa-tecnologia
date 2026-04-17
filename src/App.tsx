@@ -9,12 +9,16 @@ const App: React.FC = () => {
   return (
     <EmployeeProvider>
       <div className="app-container">
-        <div className="app-background"></div>
+        <h1 className="app-title">Gestión de Empleados</h1>
 
-        <div className="app-content">
-          <h1 className="app-title">Gestión de Empleados</h1>
-          <EmployeeForm />
-          <EmployeeList />
+        <div className="app-layout">
+          <div className="form-section">
+            <EmployeeForm />
+          </div>
+
+          <div className="list-section">
+            <EmployeeList />
+          </div>
         </div>
       </div>
     </EmployeeProvider>
