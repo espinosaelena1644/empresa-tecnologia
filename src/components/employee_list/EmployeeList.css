@@ -1,7 +1,9 @@
 /* components/employee_list/EmployeeList.css */
 
 .employee-list-container {
-  margin-top: 40px;
+  width: 96%;
+  margin-left: auto;
+  margin-right: auto;
   border: 2px solid var(--warm-primary);
   border-radius: 16px;
   background: linear-gradient(
@@ -24,7 +26,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 95%;
   height: 3px;
   background: linear-gradient(
     90deg,
@@ -65,7 +67,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 28px;
+  padding: 18px;
   border-bottom: 1px solid rgba(var(--warm-rgb), 0.3);
   background: linear-gradient(
     135deg,
