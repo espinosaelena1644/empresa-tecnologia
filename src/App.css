@@ -2,8 +2,10 @@
 
 .app-container {
   position: relative;
-  min-height: 100vh;
-  overflow-x: hidden;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .app-background {
@@ -215,10 +217,13 @@
 .app-layout {
   display: flex;
   gap: 16px;
-  padding: 0 20px 60px 20px;
+  padding: 0 20px 20px 20px;
   max-width: 1400px;
   margin: 0 auto;
   position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
 }
 
 .app-layout::before {
@@ -243,12 +248,14 @@
   flex: 0 0 35%;
   margin-left: 1rem;
   animation: fadeIn 0.8s ease-out;
+  min-height: 0;
 }
 
 .list-section {
   flex: 1;
   min-width: 0;
   animation: fadeIn 1s ease-out 0.2s both;
+  min-height: 0;
 }
 
 /* Responsive: Stacked layout en pantallas pequeñas */

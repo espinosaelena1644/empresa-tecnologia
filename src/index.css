@@ -52,7 +52,7 @@ body {
   padding: 0;
   background: var(--bg-dark-1);
   color: var(--text-primary);
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 html,
