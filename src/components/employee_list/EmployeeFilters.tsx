@@ -1,4 +1,5 @@
 import React from "react";
+import LoadingSkeleton from "../common/LoadingSkeleton";
 
 export interface EmployeeFiltersState {
   search: string;
@@ -15,6 +16,7 @@ interface EmployeeFiltersProps {
   onUpdateFilter: (key: keyof EmployeeFiltersState, value: string) => void;
   onClearFilters: () => void;
   isClearDisabled: boolean;
+  isLoading: boolean;
 }
 
 const EmployeeFilters: React.FC<EmployeeFiltersProps> = ({
@@ -23,7 +25,21 @@ const EmployeeFilters: React.FC<EmployeeFiltersProps> = ({
   onUpdateFilter,
   onClearFilters,
   isClearDisabled,
+  isLoading,
 }) => {
+  if (isLoading) {
+    return (
+      <div className="filters-section">
+        <div className="filters-grid">
+          <LoadingSkeleton className="filters-skeleton-input" count={6} />
+        </div>
+        <div className="filters-actions">
+          <LoadingSkeleton className="filters-skeleton-btn" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="filters-section">
       <div className="filters-grid">
@@ -31,7 +47,7 @@ const EmployeeFilters: React.FC<EmployeeFiltersProps> = ({
           <input
             type="text"
             placeholder="Buscar por nombre o departamento..."
-            className="futuristic-input filter-input"
+            className="futuristic-input filter-input micro-hover"
             value={filters.search}
             onChange={(e) => onUpdateFilter("search", e.target.value)}
           />
@@ -39,7 +55,7 @@ const EmployeeFilters: React.FC<EmployeeFiltersProps> = ({
 
         <div className="filter-item">
           <select
-            className="futuristic-input filter-select"
+            className="futuristic-input filter-select micro-hover"
             value={filters.department}
             onChange={(e) => onUpdateFilter("department", e.target.value)}
           >
@@ -56,7 +72,7 @@ const EmployeeFilters: React.FC<EmployeeFiltersProps> = ({
           <input
             type="number"
             placeholder="Salario minimo"
-            className="futuristic-input filter-input"
+            className="futuristic-input filter-input micro-hover"
             value={filters.minSalary}
             onChange={(e) => onUpdateFilter("minSalary", e.target.value)}
           />
@@ -66,7 +82,7 @@ const EmployeeFilters: React.FC<EmployeeFiltersProps> = ({
           <input
             type="number"
             placeholder="Salario maximo"
-            className="futuristic-input filter-input"
+            className="futuristic-input filter-input micro-hover"
             value={filters.maxSalary}
             onChange={(e) => onUpdateFilter("maxSalary", e.target.value)}
           />
@@ -76,7 +92,7 @@ const EmployeeFilters: React.FC<EmployeeFiltersProps> = ({
           <input
             type="date"
             placeholder="Fecha desde"
-            className="futuristic-input filter-input"
+            className="futuristic-input filter-input micro-hover"
             value={filters.startDateFrom}
             onChange={(e) => onUpdateFilter("startDateFrom", e.target.value)}
           />
@@ -86,7 +102,7 @@ const EmployeeFilters: React.FC<EmployeeFiltersProps> = ({
           <input
             type="date"
             placeholder="Fecha hasta"
-            className="futuristic-input filter-input"
+            className="futuristic-input filter-input micro-hover"
             value={filters.startDateTo}
             onChange={(e) => onUpdateFilter("startDateTo", e.target.value)}
           />
@@ -96,7 +112,7 @@ const EmployeeFilters: React.FC<EmployeeFiltersProps> = ({
       <div className="filters-actions">
         <button
           onClick={onClearFilters}
-          className="futuristic-btn clear-btn"
+          className="futuristic-btn clear-btn micro-press"
           disabled={isClearDisabled}
         >
           Limpiar Filtros

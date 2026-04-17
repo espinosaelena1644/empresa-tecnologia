@@ -5,6 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useEmployees } from "../../context/EmployeeContext";
 import { type Employee } from "../../types/employee";
 import { v4 as uuidv4 } from "uuid";
+import LoadingSkeleton from "../common/LoadingSkeleton";
 import "./EmployeeForm.css";
 
 interface EmployeeFormProps {
@@ -16,7 +17,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
   employeeToEdit,
   onEditComplete,
 }) => {
-  const { addEmployee, updateEmployee } = useEmployees();
+  const { addEmployee, updateEmployee, isLoading } = useEmployees();
 
   const [form, setForm] = useState<{
     name: string;
@@ -156,6 +157,15 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="futuristic-form form-skeleton">
+        <div className="form-title">Cargando formulario...</div>
+        <LoadingSkeleton className="form-skeleton-line" count={6} />
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit} className="futuristic-form">
       <h2 className="form-title">
@@ -238,7 +248,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
         )}
       </div>
 
-      <button type="submit" className="futuristic-btn">
+      <button type="submit" className="futuristic-btn micro-press">
         {employeeToEdit ? "Actualizar" : "Guardar"}
       </button>
     </form>

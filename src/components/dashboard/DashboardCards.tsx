@@ -1,9 +1,10 @@
 import React, { useMemo } from "react";
 import { useEmployees } from "../../context/EmployeeContext";
+import LoadingSkeleton from "../common/LoadingSkeleton";
 import "./DashboardCards.css";
 
 const DashboardCards: React.FC = () => {
-  const { employees } = useEmployees();
+  const { employees, isLoading } = useEmployees();
 
   const totalEmployees = employees.length;
 
@@ -26,6 +27,12 @@ const DashboardCards: React.FC = () => {
       <h3 className="dashboard-heading">Dashboard de métricas</h3>
 
       <div className="dashboard-grid">
+        {isLoading ? (
+          <>
+            <LoadingSkeleton className="dashboard-skeleton" count={3} />
+          </>
+        ) : (
+          <>
         <article className="dashboard-card metric-card">
           <div className="card-label">Total de empleados</div>
           <div className="card-value">{totalEmployees}</div>
@@ -58,6 +65,8 @@ const DashboardCards: React.FC = () => {
             )}
           </div>
         </article>
+          </>
+        )}
       </div>
     </section>
   );

@@ -43,6 +43,10 @@
     box-shadow 0.3s ease;
 }
 
+.dashboard-skeleton {
+  height: 120px;
+}
+
 .dashboard-card::before {
   content: "";
   position: absolute;
@@ -58,6 +62,10 @@
 .dashboard-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 0 38px rgba(255, 149, 0, 0.2);
+}
+
+.dashboard-card:active {
+  transform: translateY(-1px) scale(0.99);
 }
 
 .card-label {

@@ -242,6 +242,40 @@
   position: relative;
 }
 
+.filter-input,
+.filter-select,
+.clear-btn {
+  transition: transform 0.2s ease, box-shadow 0.25s ease, filter 0.25s ease;
+}
+
+.filter-input:hover,
+.filter-select:hover,
+.clear-btn:hover {
+  transform: translateY(-1px);
+}
+
+.clear-btn:active {
+  transform: scale(0.98);
+}
+
+.filters-skeleton-input {
+  height: 42px;
+}
+
+.filters-skeleton-btn {
+  width: 180px;
+  height: 44px;
+}
+
+.list-skeleton-wrapper {
+  display: grid;
+  gap: 14px;
+}
+
+.list-skeleton-card {
+  height: 90px;
+}
+
 .filter-item::after {
   content: "";
   position: absolute;

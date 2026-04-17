@@ -1,5 +1,6 @@
 // components/employee_item/EmployeeItem.tsx
 import React, { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { type Employee } from "../../types/employee";
 import { useEmployees } from "../../context/EmployeeContext";
 import EmployeeForm from "../employee_form/EmployeeForm";
@@ -21,14 +22,14 @@ const EmployeeItem: React.FC<{ employee: Employee }> = ({ employee }) => {
           <div className="card-actions">
             <button
               onClick={() => setIsEditModalOpen(true)}
-              className="futuristic-edit-btn"
+              className="futuristic-edit-btn micro-press"
               title="Editar empleado"
             >
               ✏️
             </button>
             <button
               onClick={() => deleteEmployee(employee.id)}
-              className="futuristic-delete-btn"
+              className="futuristic-delete-btn micro-press"
               title="Eliminar empleado"
             >
               ✕
@@ -61,29 +62,39 @@ const EmployeeItem: React.FC<{ employee: Employee }> = ({ employee }) => {
       </div>
 
       {/* Modal de edición */}
-      {isEditModalOpen && (
-        <div
-          className="edit-modal-overlay"
-          onClick={() => setIsEditModalOpen(false)}
-        >
-          <div
-            className="edit-modal-content"
-            onClick={(e) => e.stopPropagation()}
+      <AnimatePresence>
+        {isEditModalOpen && (
+          <motion.div
+            className="edit-modal-overlay"
+            onClick={() => setIsEditModalOpen(false)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
           >
-            <button
-              className="modal-close-btn"
-              onClick={() => setIsEditModalOpen(false)}
-              title="Cerrar"
+            <motion.div
+              className="edit-modal-content"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, y: 16, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 12, scale: 0.96 }}
+              transition={{ duration: 0.24 }}
             >
-              ✕
-            </button>
-            <EmployeeForm
-              employeeToEdit={employee}
-              onEditComplete={handleEditComplete}
-            />
-          </div>
-        </div>
-      )}
+              <button
+                className="modal-close-btn micro-press"
+                onClick={() => setIsEditModalOpen(false)}
+                title="Cerrar"
+              >
+                ✕
+              </button>
+              <EmployeeForm
+                employeeToEdit={employee}
+                onEditComplete={handleEditComplete}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };

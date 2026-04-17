@@ -1,12 +1,14 @@
 // components/employee_list/EmployeeList.tsx
 import React, { useState, useMemo } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEmployees } from "../../context/EmployeeContext";
 import EmployeeItem from "../employee_item/EmployeeItem";
 import EmployeeFilters, { type EmployeeFiltersState } from "./EmployeeFilters";
+import LoadingSkeleton from "../common/LoadingSkeleton";
 import "./EmployeeList.css";
 
 const EmployeeList: React.FC = () => {
-  const { employees } = useEmployees();
+  const { employees, isLoading } = useEmployees();
 
   // Estado para filtros
   const [filters, setFilters] = useState<EmployeeFiltersState>({
@@ -105,10 +107,15 @@ const EmployeeList: React.FC = () => {
         onUpdateFilter={updateFilter}
         onClearFilters={clearFilters}
         isClearDisabled={Object.values(filters).every((f) => f === "")}
+        isLoading={isLoading}
       />
 
       <div className="list-content">
-        {filteredEmployees.length === 0 ? (
+        {isLoading ? (
+          <div className="list-skeleton-wrapper">
+            <LoadingSkeleton className="list-skeleton-card" count={4} />
+          </div>
+        ) : filteredEmployees.length === 0 ? (
           <div className="empty-state">
             <p className="empty-message">
               {employees.length === 0
@@ -122,11 +129,22 @@ const EmployeeList: React.FC = () => {
             </p>
           </div>
         ) : (
-          <div className="employees-grid">
-            {filteredEmployees.map((emp) => (
-              <EmployeeItem key={emp.id} employee={emp} />
-            ))}
-          </div>
+          <AnimatePresence mode="popLayout">
+            <motion.div className="employees-grid" layout>
+              {filteredEmployees.map((emp) => (
+                <motion.div
+                  key={emp.id}
+                  layout
+                  initial={{ opacity: 0, y: 18, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -16, scale: 0.96 }}
+                  transition={{ duration: 0.28, ease: "easeOut" }}
+                >
+                  <EmployeeItem employee={emp} />
+                </motion.div>
+              ))}
+            </motion.div>
+          </AnimatePresence>
         )}
       </div>
     </div>

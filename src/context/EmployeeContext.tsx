@@ -7,6 +7,7 @@ interface EmployeeContextType {
   addEmployee: (emp: Employee) => void;
   updateEmployee: (emp: Employee) => void;
   deleteEmployee: (id: string) => void;
+  isLoading: boolean;
 }
 
 const EmployeeContext = createContext<EmployeeContextType | undefined>(
@@ -65,7 +66,13 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <EmployeeContext.Provider
-      value={{ employees, addEmployee, updateEmployee, deleteEmployee }}
+      value={{
+        employees,
+        addEmployee,
+        updateEmployee,
+        deleteEmployee,
+        isLoading: !isLoaded,
+      }}
     >
       {children}
     </EmployeeContext.Provider>
