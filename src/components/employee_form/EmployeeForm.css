@@ -1,7 +1,11 @@
 /* components/employee_form/EmployeeForm.css */
 
 .futuristic-form {
-  background: linear-gradient(135deg, rgba(15, 15, 30, 0.95) 0%, rgba(26, 15, 46, 0.95) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(15, 15, 30, 0.95) 0%,
+    rgba(26, 15, 46, 0.95) 100%
+  );
   border: 2px solid var(--warm-primary);
   border-radius: 16px;
   padding: 40px;
@@ -21,12 +25,19 @@
   left: 0;
   width: 100%;
   height: 2px;
-  background: linear-gradient(90deg, transparent, var(--cold-primary), var(--warm-primary), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--cold-primary),
+    var(--warm-primary),
+    transparent
+  );
   animation: borderGlow 3s ease-in-out infinite;
 }
 
 @keyframes formGlow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow:
       0 0 30px var(--warm-glow),
       inset 0 0 30px var(--cold-glow);
@@ -39,7 +50,8 @@
 }
 
 @keyframes borderGlow {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.8;
   }
   50% {
@@ -97,7 +109,11 @@
 
 .futuristic-btn {
   width: 100%;
-  background: linear-gradient(135deg, var(--warm-primary) 0%, var(--cold-primary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--warm-primary) 0%,
+    var(--cold-primary) 100%
+  );
   border: none;
   border-radius: 8px;
   padding: 16px;
@@ -120,7 +136,12 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
   transition: left 0.5s;
 }
 
@@ -136,28 +157,52 @@
 .futuristic-btn:active {
   transform: translateY(-1px);
 }
-  background: linear-gradient(135deg, #ffe600 0%, #ff0026 100%);
-  border: none;
-  border-radius: 8px;
-  padding: 14px;
-  color: #0f0f1e;
-  font-size: 16px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+
+.futuristic-input.input-error {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
 }
 
-.futuristic-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 234, 0, 0.4);
+.error-message {
+  margin-top: 10px;
+  color: #ff6b6b;
+  font-size: 13px;
+  line-height: 1.4;
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.35);
+  animation: fadeInUp 0.25s ease forwards;
 }
 
-.futuristic-btn:active {
-  transform: translateY(0);
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
+.futuristic-input.input-error {
+  animation: shake 0.25s ease;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-3px);
+  }
+  50% {
+    transform: translateX(3px);
+  }
+  75% {
+    transform: translateX(-3px);
+  }
+}
+
 /* Estilos personalizados para react-datepicker */
 .react-datepicker-wrapper {
   width: 100%;
@@ -169,10 +214,14 @@
 
 .react-datepicker {
   font-family: inherit;
-  background: linear-gradient(135deg, rgba(15, 15, 30, 0.95) 0%, rgba(26, 15, 46, 0.95) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(15, 15, 30, 0.95) 0%,
+    rgba(26, 15, 46, 0.95) 100%
+  );
   border: 2px solid #ff9500;
   border-radius: 12px;
-  box-shadow: 
+  box-shadow:
     0 0 30px rgba(255, 149, 0, 0.3),
     inset 0 0 30px rgba(255, 149, 0, 0.05);
   overflow: hidden;

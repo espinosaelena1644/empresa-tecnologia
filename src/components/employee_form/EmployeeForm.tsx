@@ -32,6 +32,47 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
     endDate: null,
   });
 
+  const [errors, setErrors] = useState<{
+    name?: string;
+    department?: string;
+    salary?: string;
+    startDate?: string;
+    endDate?: string;
+    dateRange?: string;
+  }>({});
+
+  const validateForm = () => {
+    const nextErrors: typeof errors = {};
+
+    if (!form.name.trim()) {
+      nextErrors.name = "El nombre es obligatorio.";
+    }
+
+    if (!form.department.trim()) {
+      nextErrors.department = "El departamento es obligatorio.";
+    }
+
+    if (form.salary <= 0) {
+      nextErrors.salary = "El salario debe ser positivo.";
+    }
+
+    if (!form.startDate) {
+      nextErrors.startDate = "Selecciona una fecha de inicio.";
+    }
+
+    if (!form.endDate) {
+      nextErrors.endDate = "Selecciona una fecha de fin.";
+    }
+
+    if (form.startDate && form.endDate && form.endDate < form.startDate) {
+      nextErrors.dateRange =
+        "Fecha de fin no puede ser anterior a fecha de inicio.";
+    }
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
+
   // Pre-llenar formulario si estamos editando
   useEffect(() => {
     if (employeeToEdit) {
@@ -51,6 +92,11 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       ...form,
       [name]: name === "salary" ? Number(value) : value,
     });
+    setErrors((prev) => ({
+      ...prev,
+      [name]: undefined,
+      dateRange: undefined,
+    }));
   };
 
   const handleDateChange = (
@@ -61,13 +107,17 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       ...form,
       [field]: date,
     });
+    setErrors((prev) => ({
+      ...prev,
+      [field]: undefined,
+      dateRange: undefined,
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form.startDate || !form.endDate) {
-      alert("Por favor selecciona ambas fechas");
+    if (!validateForm()) {
       return;
     }
 
@@ -78,8 +128,8 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
         name: form.name,
         department: form.department,
         salary: form.salary,
-        startDate: form.startDate.toISOString().split("T")[0],
-        endDate: form.endDate.toISOString().split("T")[0],
+        startDate: form.startDate!.toISOString().split("T")[0],
+        endDate: form.endDate!.toISOString().split("T")[0],
       });
       onEditComplete?.();
     } else {
@@ -89,8 +139,8 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
         name: form.name,
         department: form.department,
         salary: form.salary,
-        startDate: form.startDate.toISOString().split("T")[0],
-        endDate: form.endDate.toISOString().split("T")[0],
+        startDate: form.startDate!.toISOString().split("T")[0],
+        endDate: form.endDate!.toISOString().split("T")[0],
       });
     }
 
@@ -116,22 +166,26 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
         <input
           name="name"
           placeholder="Nombre"
-          className="futuristic-input"
+          className={`futuristic-input ${errors.name ? "input-error" : ""}`}
           value={form.name}
           onChange={handleChange}
           required
         />
+        {errors.name && <div className="error-message">{errors.name}</div>}
       </div>
 
       <div className="mb-3">
         <input
           name="department"
           placeholder="Departamento"
-          className="futuristic-input"
+          className={`futuristic-input ${errors.department ? "input-error" : ""}`}
           value={form.department}
           onChange={handleChange}
           required
         />
+        {errors.department && (
+          <div className="error-message">{errors.department}</div>
+        )}
       </div>
 
       <div className="mb-3">
@@ -139,11 +193,12 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
           name="salary"
           placeholder="$ Salario"
           type="number"
-          className="futuristic-input"
+          className={`futuristic-input ${errors.salary ? "input-error" : ""}`}
           value={form.salary}
           onChange={handleChange}
           required
         />
+        {errors.salary && <div className="error-message">{errors.salary}</div>}
       </div>
 
       <div className="mb-3">
@@ -152,9 +207,12 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
           onChange={(date) => handleDateChange(date, "startDate")}
           dateFormat="dd/MM/yyyy"
           placeholderText="Fecha de inicio"
-          className="futuristic-input"
+          className={`futuristic-input ${errors.startDate ? "input-error" : ""}`}
           required
         />
+        {errors.startDate && (
+          <div className="error-message">{errors.startDate}</div>
+        )}
       </div>
 
       <div className="mb-3">
@@ -163,9 +221,15 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
           onChange={(date) => handleDateChange(date, "endDate")}
           dateFormat="dd/MM/yyyy"
           placeholderText="Fecha de fin"
-          className="futuristic-input"
+          className={`futuristic-input ${errors.endDate || errors.dateRange ? "input-error" : ""}`}
           required
         />
+        {errors.endDate && (
+          <div className="error-message">{errors.endDate}</div>
+        )}
+        {errors.dateRange && (
+          <div className="error-message">{errors.dateRange}</div>
+        )}
       </div>
 
       <button type="submit" className="futuristic-btn">
