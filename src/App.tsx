@@ -3,6 +3,7 @@ import React from "react";
 import { EmployeeProvider } from "./context/EmployeeContext";
 import EmployeeForm from "./components/employee_form/EmployeeForm";
 import EmployeeList from "./components/employee_list/EmployeeList";
+import DashboardCards from "./components/dashboard/DashboardCards";
 import "./App.css";
 
 const App: React.FC = () => {
@@ -14,6 +15,7 @@ const App: React.FC = () => {
         <div className="app-layout">
           <div className="form-section">
             <EmployeeForm />
+            <DashboardCards />
           </div>
 
           <div className="list-section">
