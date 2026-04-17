@@ -2,13 +2,14 @@
 import React, { useState, useMemo } from "react";
 import { useEmployees } from "../../context/EmployeeContext";
 import EmployeeItem from "../employee_item/EmployeeItem";
+import EmployeeFilters, { type EmployeeFiltersState } from "./EmployeeFilters";
 import "./EmployeeList.css";
 
 const EmployeeList: React.FC = () => {
   const { employees } = useEmployees();
 
   // Estado para filtros
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<EmployeeFiltersState>({
     search: "",
     department: "",
     minSalary: "",
@@ -82,7 +83,7 @@ const EmployeeList: React.FC = () => {
   };
 
   // Actualizar filtro
-  const updateFilter = (key: string, value: string) => {
+  const updateFilter = (key: keyof EmployeeFiltersState, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -98,92 +99,13 @@ const EmployeeList: React.FC = () => {
         </div>
       </div>
 
-      {/* Filtros */}
-      <div className="filters-section">
-        <div className="filters-grid">
-          {/* Búsqueda */}
-          <div className="filter-item">
-            <input
-              type="text"
-              placeholder="Buscar por nombre o departamento..."
-              className="futuristic-input filter-input"
-              value={filters.search}
-              onChange={(e) => updateFilter("search", e.target.value)}
-            />
-          </div>
-
-          {/* Departamento */}
-          <div className="filter-item">
-            <select
-              className="futuristic-input filter-select"
-              value={filters.department}
-              onChange={(e) => updateFilter("department", e.target.value)}
-            >
-              <option value="">Todos los departamentos</option>
-              {uniqueDepartments.map((dept) => (
-                <option key={dept} value={dept}>
-                  {dept}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Salario mínimo */}
-          <div className="filter-item">
-            <input
-              type="number"
-              placeholder="Salario mínimo"
-              className="futuristic-input filter-input"
-              value={filters.minSalary}
-              onChange={(e) => updateFilter("minSalary", e.target.value)}
-            />
-          </div>
-
-          {/* Salario máximo */}
-          <div className="filter-item">
-            <input
-              type="number"
-              placeholder="Salario máximo"
-              className="futuristic-input filter-input"
-              value={filters.maxSalary}
-              onChange={(e) => updateFilter("maxSalary", e.target.value)}
-            />
-          </div>
-
-          {/* Fecha desde */}
-          <div className="filter-item">
-            <input
-              type="date"
-              placeholder="Fecha desde"
-              className="futuristic-input filter-input"
-              value={filters.startDateFrom}
-              onChange={(e) => updateFilter("startDateFrom", e.target.value)}
-            />
-          </div>
-
-          {/* Fecha hasta */}
-          <div className="filter-item">
-            <input
-              type="date"
-              placeholder="Fecha hasta"
-              className="futuristic-input filter-input"
-              value={filters.startDateTo}
-              onChange={(e) => updateFilter("startDateTo", e.target.value)}
-            />
-          </div>
-        </div>
-
-        {/* Botón limpiar */}
-        <div className="filters-actions">
-          <button
-            onClick={clearFilters}
-            className="futuristic-btn clear-btn"
-            disabled={Object.values(filters).every((f) => f === "")}
-          >
-            Limpiar Filtros
-          </button>
-        </div>
-      </div>
+      <EmployeeFilters
+        filters={filters}
+        uniqueDepartments={uniqueDepartments}
+        onUpdateFilter={updateFilter}
+        onClearFilters={clearFilters}
+        isClearDisabled={Object.values(filters).every((f) => f === "")}
+      />
 
       <div className="list-content">
         {filteredEmployees.length === 0 ? (
