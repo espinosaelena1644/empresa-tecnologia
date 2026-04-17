@@ -1,11 +1,13 @@
 // components/employee_list/EmployeeList.tsx
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEmployees } from "../../context/EmployeeContext";
 import EmployeeItem from "../employee_item/EmployeeItem";
 import EmployeeFilters, { type EmployeeFiltersState } from "./EmployeeFilters";
 import LoadingSkeleton from "../common/LoadingSkeleton";
 import "./EmployeeList.css";
+
+const ITEMS_PER_PAGE = 10;
 
 const EmployeeList: React.FC = () => {
   const { employees, isLoading } = useEmployees();
@@ -19,6 +21,7 @@ const EmployeeList: React.FC = () => {
     startDateFrom: "",
     startDateTo: "",
   });
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Empleados filtrados
   const filteredEmployees = useMemo(() => {
@@ -71,6 +74,28 @@ const EmployeeList: React.FC = () => {
     const departments = employees.map((emp) => emp.department);
     return [...new Set(departments)].sort();
   }, [employees]);
+
+  const isPaginated = filteredEmployees.length > ITEMS_PER_PAGE;
+  const totalPages = Math.max(1, Math.ceil(filteredEmployees.length / ITEMS_PER_PAGE));
+
+  const visibleEmployees = useMemo(() => {
+    if (!isPaginated) {
+      return filteredEmployees;
+    }
+
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredEmployees.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredEmployees, isPaginated, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters, employees.length]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   // Limpiar filtros
   const clearFilters = () => {
@@ -131,7 +156,7 @@ const EmployeeList: React.FC = () => {
         ) : (
           <AnimatePresence mode="popLayout">
             <motion.div className="employees-grid" layout>
-              {filteredEmployees.map((emp) => (
+              {visibleEmployees.map((emp) => (
                 <motion.div
                   key={emp.id}
                   layout
@@ -145,6 +170,46 @@ const EmployeeList: React.FC = () => {
               ))}
             </motion.div>
           </AnimatePresence>
+        )}
+
+        {!isLoading && filteredEmployees.length > 0 && isPaginated && (
+          <div className="pagination-controls">
+            <button
+              type="button"
+              className="pagination-btn"
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+            >
+              Anterior
+            </button>
+
+            <div className="pagination-pages">
+              {Array.from({ length: totalPages }, (_, index) => {
+                const page = index + 1;
+                return (
+                  <button
+                    key={page}
+                    type="button"
+                    className={`pagination-page-btn ${currentPage === page ? "active" : ""}`}
+                    onClick={() => setCurrentPage(page)}
+                  >
+                    {page}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              type="button"
+              className="pagination-btn"
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+              }
+              disabled={currentPage === totalPages}
+            >
+              Siguiente
+            </button>
+          </div>
         )}
       </div>
     </div>

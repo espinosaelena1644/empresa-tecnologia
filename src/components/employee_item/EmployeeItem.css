@@ -345,6 +345,23 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .futuristic-card,
+  .futuristic-card:hover {
+    max-height: none;
+    transform: none;
+  }
+
+  .card-content,
+  .futuristic-card:hover .card-content {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .info-grid {
+    grid-template-columns: repeat(2, minmax(140px, 1fr));
+  }
+
   .card-actions {
     flex-direction: column;
     gap: 6px;
@@ -369,5 +386,20 @@
 
   .employee-name {
     font-size: 16px;
+  }
+}
+
+@media (hover: none) {
+  .futuristic-card,
+  .futuristic-card:hover {
+    max-height: none;
+    transform: none;
+  }
+
+  .card-content,
+  .futuristic-card:hover .card-content {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
   }
 }
