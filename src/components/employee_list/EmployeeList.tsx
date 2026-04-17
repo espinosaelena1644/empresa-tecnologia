@@ -76,7 +76,10 @@ const EmployeeList: React.FC = () => {
   }, [employees]);
 
   const isPaginated = filteredEmployees.length > ITEMS_PER_PAGE;
-  const totalPages = Math.max(1, Math.ceil(filteredEmployees.length / ITEMS_PER_PAGE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredEmployees.length / ITEMS_PER_PAGE),
+  );
 
   const visibleEmployees = useMemo(() => {
     if (!isPaginated) {
