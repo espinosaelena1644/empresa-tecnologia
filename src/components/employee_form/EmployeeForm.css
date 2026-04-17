@@ -3,8 +3,8 @@
 .futuristic-form {
   background: linear-gradient(
     135deg,
-    rgba(15, 15, 30, 0.95) 0%,
-    rgba(26, 15, 46, 0.95) 100%
+    var(--panel-bg-start) 0%,
+    var(--panel-bg-end) 100%
   );
   border: 2px solid var(--warm-primary);
   border-radius: 16px;
@@ -94,7 +94,7 @@
 
 .futuristic-input {
   width: 100%;
-  background: rgba(15, 15, 30, 0.8);
+  background: var(--panel-bg-soft);
   border: 1px solid var(--warm-primary);
   border-radius: 8px;
   padding: 14px 16px;
@@ -110,7 +110,7 @@
 
 .futuristic-input:focus {
   outline: none;
-  background: rgba(0, 217, 255, 0.1);
+  background: rgba(var(--cold-rgb), 0.1);
   border-color: var(--cold-primary);
   box-shadow: 0 0 20px var(--cold-glow);
   transform: translateY(-2px);
@@ -126,14 +126,14 @@
   border: none;
   border-radius: 8px;
   padding: 16px;
-  color: var(--bg-dark-1);
+  color: var(--text-on-accent);
   font-size: 16px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;
   transition: all 0.3s ease;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 2px var(--neutral-shadow);
   position: relative;
   overflow: hidden;
 }
@@ -172,16 +172,16 @@
 }
 
 .futuristic-input.input-error {
-  border-color: #ff6b6b;
-  box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
+  border-color: var(--error-primary);
+  box-shadow: 0 0 20px rgba(var(--error-rgb), 0.4);
 }
 
 .error-message {
   margin-top: 10px;
-  color: #ff6b6b;
+  color: var(--error-primary);
   font-size: 13px;
   line-height: 1.4;
-  text-shadow: 0 0 10px rgba(255, 107, 107, 0.35);
+  text-shadow: 0 0 10px rgba(var(--error-rgb), 0.35);
   animation: fadeInUp 0.25s ease forwards;
 }
 
@@ -229,14 +229,14 @@
   font-family: inherit;
   background: linear-gradient(
     135deg,
-    rgba(15, 15, 30, 0.95) 0%,
-    rgba(26, 15, 46, 0.95) 100%
+    var(--panel-bg-start) 0%,
+    var(--panel-bg-end) 100%
   );
-  border: 2px solid #ff9500;
+  border: 2px solid var(--warm-primary);
   border-radius: 12px;
   box-shadow:
-    0 0 30px rgba(255, 149, 0, 0.3),
-    inset 0 0 30px rgba(255, 149, 0, 0.05);
+    0 0 30px rgba(var(--warm-rgb), 0.3),
+    inset 0 0 30px rgba(var(--warm-rgb), 0.05);
   overflow: hidden;
 }
 
@@ -245,15 +245,19 @@
 }
 
 .react-datepicker__header {
-  background: linear-gradient(135deg, #ff9500, #ffb700);
-  border-bottom: 1px solid rgba(255, 149, 0, 0.3);
+  background: linear-gradient(
+    135deg,
+    var(--warm-primary),
+    var(--warm-secondary)
+  );
+  border-bottom: 1px solid rgba(var(--warm-rgb), 0.3);
   padding: 12px;
   text-align: center;
 }
 
 .react-datepicker__current-month,
 .react-datepicker-time__header {
-  color: #0a0a15;
+  color: var(--text-on-accent);
   font-weight: 700;
   font-size: 16px;
   text-transform: uppercase;
@@ -261,19 +265,19 @@
 }
 
 .react-datepicker__day-names {
-  background: rgba(255, 149, 0, 0.1);
-  border-bottom: 1px solid rgba(255, 149, 0, 0.2);
+  background: rgba(var(--warm-rgb), 0.1);
+  border-bottom: 1px solid rgba(var(--warm-rgb), 0.2);
 }
 
 .react-datepicker__day-name {
-  color: #ff9500;
+  color: var(--warm-primary);
   font-weight: 600;
   width: 32px;
   line-height: 32px;
 }
 
 .react-datepicker__day {
-  color: #ffb700;
+  color: var(--warm-secondary);
   width: 32px;
   line-height: 32px;
   margin: 2px;
@@ -283,29 +287,33 @@
 }
 
 .react-datepicker__day:hover {
-  background: rgba(255, 149, 0, 0.3) !important;
-  color: #0a0a15 !important;
+  background: rgba(var(--warm-rgb), 0.3) !important;
+  color: var(--text-on-accent) !important;
 }
 
 .react-datepicker__day--selected {
-  background: linear-gradient(135deg, #ff9500, #ffb700) !important;
-  color: #0a0a15 !important;
+  background: linear-gradient(
+    135deg,
+    var(--warm-primary),
+    var(--warm-secondary)
+  ) !important;
+  color: var(--text-on-accent) !important;
   font-weight: 700;
 }
 
 .react-datepicker__day--keyboard-selected {
-  background: rgba(255, 149, 0, 0.5) !important;
-  color: #0a0a15 !important;
+  background: rgba(var(--warm-rgb), 0.5) !important;
+  color: var(--text-on-accent) !important;
 }
 
 .react-datepicker__day--today {
-  background: rgba(255, 107, 53, 0.2);
-  color: #ff6b35;
+  background: rgba(var(--warm-rgb), 0.2);
+  color: var(--warm-accent);
   font-weight: 600;
 }
 
 .react-datepicker__day--disabled {
-  color: rgba(255, 149, 0, 0.3);
+  color: rgba(var(--warm-rgb), 0.3);
   cursor: not-allowed;
 }
 
@@ -322,16 +330,16 @@
 }
 
 .react-datepicker__navigation:hover {
-  background: rgba(255, 149, 0, 0.2);
+  background: rgba(var(--warm-rgb), 0.2);
 }
 
 .react-datepicker__navigation-icon::before {
-  border-color: #ff9500;
+  border-color: var(--warm-primary);
   border-width: 2px 2px 0 0;
 }
 
 .react-datepicker__month-container {
-  background: rgba(15, 15, 30, 0.9);
+  background: var(--panel-bg-soft);
 }
 
 .react-datepicker__month-dropdown-container,
@@ -344,16 +352,16 @@
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background: rgba(10, 10, 21, 0.95);
+  background: var(--panel-bg-card);
   color: var(--warm-primary);
-  border: 1px solid rgba(255, 149, 0, 0.45);
+  border: 1px solid rgba(var(--warm-rgb), 0.45);
   border-radius: 8px;
   padding: 4px 28px 4px 10px;
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  box-shadow: 0 0 10px rgba(255, 149, 0, 0.2);
+  box-shadow: 0 0 10px rgba(var(--warm-rgb), 0.2);
   cursor: pointer;
   background-image:
     linear-gradient(45deg, transparent 50%, var(--cold-primary) 50%),

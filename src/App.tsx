@@ -45,9 +45,15 @@ const App: React.FC = () => {
             className="theme-toggle-btn micro-press"
             onClick={toggleTheme}
             aria-label="Cambiar tema"
-            title={theme === "dark" ? "Cambiar a tema claro" : "Cambiar a tema oscuro"}
+            title={
+              theme === "dark"
+                ? "Cambiar a tema claro"
+                : "Cambiar a tema oscuro"
+            }
           >
-            <span className="theme-toggle-icon">{theme === "dark" ? "☀" : "🌙"}</span>
+            <span className="theme-toggle-icon">
+              {theme === "dark" ? "☀" : "🌙"}
+            </span>
             <span className="theme-toggle-text">
               {theme === "dark" ? "Tema claro" : "Tema oscuro"}
             </span>
