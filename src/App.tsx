@@ -38,6 +38,8 @@ const App: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, ease: "easeOut" }}
       >
+        <div className="app-background" aria-hidden="true" />
+
         <div className="app-title-row">
           <h1 className="app-title">Gestión de Empleados</h1>
           <button
