@@ -1,12 +1,92 @@
 /* index.css */
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  /* Colores cálidos (naranjas/dorados) */
+  --warm-primary: #ff9500;
+  --warm-secondary: #ffb700;
+  --warm-accent: #ff6b35;
+  --warm-rgb: 255, 149, 0;
+  --warm-glow: rgba(255, 149, 0, 0.5);
 
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #0a0a15;
+  /* Colores fríos (cian/azul) */
+  --cold-primary: #00d9ff;
+  --cold-secondary: #00ffd5;
+  --cold-accent: #0099cc;
+  --cold-rgb: 0, 217, 255;
+  --cold-glow: rgba(0, 217, 255, 0.5);
+
+  /* Fondos oscuros */
+  --bg-dark-1: #0a0a15;
+  --bg-dark-2: #1a0f2e;
+  --bg-dark-3: #0f0a1a;
+
+  /* Texto */
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --text-muted: rgba(255, 255, 255, 0.6);
+
+  --panel-bg-start: rgba(15, 15, 30, 0.95);
+  --panel-bg-end: rgba(26, 15, 46, 0.95);
+  --panel-bg-soft: rgba(15, 15, 30, 0.8);
+  --panel-bg-card: rgba(10, 10, 20, 0.96);
+  --panel-bg-subtle: rgba(255, 255, 255, 0.08);
+  --overlay-bg: rgba(0, 0, 0, 0.8);
+  --neutral-shadow: rgba(0, 0, 0, 0.18);
+
+  --error-primary: #ff6b6b;
+  --error-rgb: 255, 107, 107;
+  --text-on-accent: #0a0a15;
+
+  font-family:
+    "Inter",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+
+  color: var(--text-primary);
+  background-color: var(--bg-dark-1);
+}
+
+:root[data-theme="light"] {
+  --warm-primary: #d97706;
+  --warm-secondary: #f59e0b;
+  --warm-accent: #ea580c;
+  --warm-rgb: 217, 119, 6;
+  --warm-glow: rgba(217, 119, 6, 0.35);
+
+  --cold-primary: #0284c7;
+  --cold-secondary: #0891b2;
+  --cold-accent: #0ea5e9;
+  --cold-rgb: 2, 132, 199;
+  --cold-glow: rgba(2, 132, 199, 0.28);
+
+  --bg-dark-1: #f8fafc;
+  --bg-dark-2: #e2e8f0;
+  --bg-dark-3: #dbeafe;
+
+  --text-primary: #0f172a;
+  --text-secondary: rgba(15, 23, 42, 0.84);
+  --text-muted: rgba(15, 23, 42, 0.65);
+
+  --panel-bg-start: rgba(255, 255, 255, 0.94);
+  --panel-bg-end: rgba(241, 245, 249, 0.94);
+  --panel-bg-soft: rgba(248, 250, 252, 0.9);
+  --panel-bg-card: rgba(255, 255, 255, 0.98);
+  --panel-bg-subtle: rgba(15, 23, 42, 0.08);
+  --overlay-bg: rgba(15, 23, 42, 0.5);
+  --neutral-shadow: rgba(15, 23, 42, 0.1);
+
+  --error-primary: #dc2626;
+  --error-rgb: 220, 38, 38;
+  --text-on-accent: #0f172a;
 }
 
 * {
@@ -15,11 +95,23 @@
   box-sizing: border-box;
 }
 
+*,
+*::before,
+*::after {
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease,
+    border-color 0.35s ease,
+    box-shadow 0.35s ease,
+    text-shadow 0.35s ease;
+}
+
 body {
   margin: 0;
   padding: 0;
-  background: #0a0a15;
-  color: #ffffff;
+  background: var(--bg-dark-1);
+  color: var(--text-primary);
+  overflow: hidden;
 }
 
 html,
@@ -27,25 +119,183 @@ body,
 #root {
   width: 100%;
   height: 100%;
-  overflow-x: hidden;
 }
 
-/* Scrollbar personalizado */
+/* Scrollbar futurista */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 149, 0, 0.1);
+  background: linear-gradient(180deg, var(--bg-dark-1), var(--bg-dark-2));
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #ff9500, #ffb700);
-  border-radius: 5px;
+  background: linear-gradient(180deg, var(--warm-primary), var(--cold-primary));
+  border-radius: 6px;
+  border: 2px solid var(--bg-dark-1);
+  box-shadow: 0 0 10px var(--warm-glow);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #ffb700, #ff9500);
+  background: linear-gradient(
+    180deg,
+    var(--warm-secondary),
+    var(--cold-secondary)
+  );
+  box-shadow: 0 0 15px var(--cold-glow);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bg-dark-1);
+}
+
+/* Selección de texto futurista */
+::selection {
+  background: linear-gradient(135deg, var(--warm-primary), var(--cold-primary));
+  color: var(--bg-dark-1);
+  text-shadow: 0 0 5px var(--warm-glow);
+}
+
+::-moz-selection {
+  background: linear-gradient(135deg, var(--warm-primary), var(--cold-primary));
+  color: var(--bg-dark-1);
+  text-shadow: 0 0 5px var(--warm-glow);
+}
+
+/* Enlaces */
+a {
+  color: var(--cold-primary);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: var(--warm-primary);
+  text-shadow: 0 0 8px var(--cold-glow);
+}
+
+/* Botones globales */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:focus {
+  outline: 2px solid var(--cold-primary);
+  outline-offset: 2px;
+}
+
+/* Inputs globales */
+input,
+textarea,
+select {
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--cold-primary);
+}
+
+/* Animaciones globales */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px var(--warm-glow);
+  }
+  50% {
+    box-shadow: 0 0 30px var(--cold-glow);
+  }
+}
+
+/* Utilidades */
+.glow-warm {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.glow-cold {
+  animation: glow 2s ease-in-out infinite reverse;
+}
+
+.fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.micro-hover {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
+}
+
+.micro-hover:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+}
+
+.micro-press {
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease;
+}
+
+.micro-press:active {
+  transform: scale(0.97);
+  filter: brightness(0.95);
+}
+
+.skeleton-block {
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.22) 50%,
+    transparent 80%
+  );
+  transform: translateX(-100%);
+  animation: skeletonSlide 1.2s ease-in-out infinite;
+}
+
+@keyframes skeletonSlide {
+  to {
+    transform: translateX(100%);
+  }
 }
 
 /* Selection */

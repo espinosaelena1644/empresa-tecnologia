@@ -3,125 +3,382 @@
 .futuristic-card {
   background: linear-gradient(
     135deg,
-    rgba(15, 15, 30, 0.9) 0%,
-    rgba(26, 15, 46, 0.9) 100%
+    var(--panel-bg-start) 0%,
+    var(--panel-bg-end) 100%
   );
-  margin: 0.5rem;
-  border: 1px solid #ff9500;
-  border-radius: 10px;
-  padding: 20px;
+  border: 1px solid var(--warm-primary);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
   position: relative;
   overflow: hidden;
   box-shadow:
-    0 0 20px rgba(255, 149, 0, 0.2),
-    inset 0 0 20px rgba(255, 149, 0, 0.05);
-  transition: all 0.3s ease;
+    0 0 20px var(--warm-glow),
+    inset 0 0 20px var(--cold-glow);
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease,
+    max-height 0.35s ease;
+  backdrop-filter: blur(15px);
+  animation: cardFadeIn 0.6s ease-out;
+  max-height: 92px;
+  z-index: 1;
+}
+
+.futuristic-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--cold-primary),
+    var(--warm-primary),
+    transparent
+  );
+  opacity: 0.7;
+}
+
+.futuristic-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 50px;
+  height: 50px;
+  background: radial-gradient(circle, var(--cold-glow) 0%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0.3;
+  animation: cornerGlow 3s ease-in-out infinite;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cornerGlow {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
 }
 
 .futuristic-card:hover {
-  border-color: #ffb700;
+  border-color: var(--cold-primary);
   box-shadow:
-    0 0 30px rgba(255, 149, 0, 0.4),
-    inset 0 0 30px rgba(255, 149, 0, 0.1);
-  transform: translateY(-4px);
+    0 0 45px var(--cold-glow),
+    inset 0 0 35px var(--warm-glow);
+  transform: translateY(-6px);
+  max-height: 420px;
+  z-index: 10;
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 149, 0, 0.3);
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(var(--warm-rgb), 0.3);
+  position: relative;
+}
+
+.card-header::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--cold-primary),
+    transparent
+  );
+  animation: headerLine 2s ease-in-out infinite;
+}
+
+@keyframes headerLine {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .employee-name {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
-  color: #ff9500;
+  color: var(--warm-primary);
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 1px;
-  text-shadow: 0 0 8px rgba(255, 149, 0, 0.4);
+  text-shadow: 0 0 10px var(--warm-glow);
+  position: relative;
+  z-index: 1;
 }
 
 .futuristic-delete-btn {
-  background: rgba(255, 107, 53, 0.2);
-  border: 1px solid #ff6b35;
-  color: #ff6b35;
-  width: 32px;
-  height: 32px;
+  background: rgba(var(--warm-rgb), 0.2);
+  border: 1px solid var(--warm-accent);
+  color: var(--warm-accent);
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 20px;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  z-index: 1;
 }
 
 .futuristic-delete-btn:hover {
-  background: rgba(255, 107, 53, 0.4);
-  box-shadow: 0 0 15px rgba(255, 107, 53, 0.5);
-  transform: scale(1.1);
+  background: rgba(var(--warm-rgb), 0.35);
+  box-shadow: 0 0 20px var(--warm-glow);
+  transform: scale(1.1) rotate(90deg);
+  color: var(--text-primary);
 }
 
 .department-label {
-  color: rgba(255, 149, 0, 0.7);
-  font-size: 12px;
+  color: var(--cold-primary);
+  font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  margin: 0 0 12px 0;
-  opacity: 0.8;
+  margin: 0 0 16px 0;
+  opacity: 0.9;
+  font-weight: 600;
+}
+
+.card-content {
+  opacity: 0;
+  transform: translateY(-12px);
+  transition:
+    opacity 0.28s ease,
+    transform 0.28s ease;
+  pointer-events: none;
+}
+
+.futuristic-card:hover .card-content {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 .info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 16px;
+  align-items: center;
 }
 
 .info-item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 10px;
-  background: rgba(255, 149, 0, 0.05);
-  border: 1px solid rgba(255, 149, 0, 0.2);
-  border-radius: 6px;
+  gap: 6px;
+  padding: 12px;
+  background: rgba(var(--cold-rgb), 0.05);
+  border: 1px solid rgba(var(--cold-rgb), 0.2);
+  border-radius: 8px;
   transition: all 0.3s ease;
+  position: relative;
 }
 
-.info-item:hover {
-  background: rgba(255, 149, 0, 0.1);
-  border-color: rgba(255, 149, 0, 0.4);
-  box-shadow: 0 0 10px rgba(255, 149, 0, 0.15);
-}
-
-.info-label {
-  font-size: 11px;
-  color: rgba(255, 149, 0, 0.6);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.info-value {
-  font-size: 14px;
-  font-weight: 600;
-  color: #ffb700;
-  text-shadow: 0 0 6px rgba(255, 183, 0, 0.3);
-}
-
-.card-border {
+.info-item::before {
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #ff9500, transparent);
-  opacity: 0.5;
+  background: linear-gradient(90deg, var(--cold-primary), var(--warm-primary));
+  border-radius: 8px 8px 0 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
+.info-item:hover {
+  background: rgba(var(--cold-rgb), 0.1);
+  border-color: var(--cold-primary);
+  box-shadow: 0 0 15px var(--cold-glow);
+  transform: translateY(-2px);
+}
+
+.info-item:hover::before {
+  opacity: 1;
+}
+
+.info-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.info-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--cold-secondary);
+  text-shadow: 0 0 8px var(--cold-glow);
+}
+
+/* Botones de acción */
+.card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.futuristic-edit-btn {
+  background: rgba(var(--cold-rgb), 0.2);
+  border: 1px solid var(--cold-primary);
+  color: var(--cold-primary);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.futuristic-edit-btn:hover {
+  background: rgba(var(--cold-rgb), 0.35);
+  box-shadow: 0 0 20px var(--cold-glow);
+  transform: scale(1.1);
+  color: var(--text-primary);
+}
+
+/* Modal de edición */
+.edit-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--overlay-bg);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+.edit-modal-content {
+  position: relative;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(var(--warm-rgb), 0.2);
+  border: 1px solid var(--warm-accent);
+  color: var(--warm-accent);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+}
+
+.modal-close-btn:hover {
+  background: rgba(var(--warm-rgb), 0.35);
+  box-shadow: 0 0 15px var(--warm-glow);
+  transform: scale(1.1);
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .futuristic-card,
+  .futuristic-card:hover {
+    max-height: none;
+    transform: none;
+  }
+
+  .card-content,
+  .futuristic-card:hover .card-content {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .info-grid {
+    grid-template-columns: repeat(2, minmax(140px, 1fr));
+  }
+
+  .card-actions {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .futuristic-edit-btn,
+  .futuristic-delete-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .edit-modal-content {
+    width: 95%;
+    max-height: 95vh;
+  }
+}
 @media (max-width: 600px) {
   .info-grid {
     grid-template-columns: 1fr;
@@ -129,5 +386,20 @@
 
   .employee-name {
     font-size: 16px;
+  }
+}
+
+@media (hover: none) {
+  .futuristic-card,
+  .futuristic-card:hover {
+    max-height: none;
+    transform: none;
+  }
+
+  .card-content,
+  .futuristic-card:hover .card-content {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
   }
 }
