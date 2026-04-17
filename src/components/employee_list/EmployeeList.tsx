@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEmployees } from "../../context/EmployeeContext";
 import EmployeeItem from "../employee_item/EmployeeItem";
 import EmployeeFilters, { type EmployeeFiltersState } from "./EmployeeFilters";
+import EmployeePagination from "./EmployeePagination";
 import LoadingSkeleton from "../common/LoadingSkeleton";
 import "./EmployeeList.css";
 
@@ -176,43 +177,15 @@ const EmployeeList: React.FC = () => {
         )}
 
         {!isLoading && filteredEmployees.length > 0 && isPaginated && (
-          <div className="pagination-controls">
-            <button
-              type="button"
-              className="pagination-btn"
-              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-              disabled={currentPage === 1}
-            >
-              Anterior
-            </button>
-
-            <div className="pagination-pages">
-              {Array.from({ length: totalPages }, (_, index) => {
-                const page = index + 1;
-                return (
-                  <button
-                    key={page}
-                    type="button"
-                    className={`pagination-page-btn ${currentPage === page ? "active" : ""}`}
-                    onClick={() => setCurrentPage(page)}
-                  >
-                    {page}
-                  </button>
-                );
-              })}
-            </div>
-
-            <button
-              type="button"
-              className="pagination-btn"
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-              }
-              disabled={currentPage === totalPages}
-            >
-              Siguiente
-            </button>
-          </div>
+          <EmployeePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPrevious={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+            onNext={() =>
+              setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+            }
+            onSelectPage={(page) => setCurrentPage(page)}
+          />
         )}
       </div>
     </div>
