@@ -1,5 +1,5 @@
 // App.tsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { EmployeeProvider } from "./context/EmployeeContext";
 import EmployeeForm from "./components/employee_form/EmployeeForm";
@@ -7,7 +7,29 @@ import EmployeeList from "./components/employee_list/EmployeeList";
 import DashboardCards from "./components/dashboard/DashboardCards";
 import "./App.css";
 
+type ThemeMode = "dark" | "light";
+
+const THEME_STORAGE_KEY = "employee-theme";
+
 const App: React.FC = () => {
+  const [theme, setTheme] = useState<ThemeMode>("dark");
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    if (storedTheme === "dark" || storedTheme === "light") {
+      setTheme(storedTheme);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
+
   return (
     <EmployeeProvider>
       <motion.div
@@ -16,7 +38,21 @@ const App: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, ease: "easeOut" }}
       >
-        <h1 className="app-title">Gestión de Empleados</h1>
+        <div className="app-title-row">
+          <h1 className="app-title">Gestión de Empleados</h1>
+          <button
+            type="button"
+            className="theme-toggle-btn micro-press"
+            onClick={toggleTheme}
+            aria-label="Cambiar tema"
+            title={theme === "dark" ? "Cambiar a tema claro" : "Cambiar a tema oscuro"}
+          >
+            <span className="theme-toggle-icon">{theme === "dark" ? "☀" : "🌙"}</span>
+            <span className="theme-toggle-text">
+              {theme === "dark" ? "Tema claro" : "Tema oscuro"}
+            </span>
+          </button>
+        </div>
 
         <motion.div
           className="app-layout"
