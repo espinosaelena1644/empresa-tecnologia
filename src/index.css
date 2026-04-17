@@ -190,7 +190,10 @@ select:focus {
 }
 
 .micro-hover {
-  transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
 }
 
 .micro-hover:hover {
@@ -199,7 +202,9 @@ select:focus {
 }
 
 .micro-press {
-  transition: transform 0.15s ease, filter 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease;
 }
 
 .micro-press:active {

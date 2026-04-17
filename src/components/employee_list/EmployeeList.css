@@ -206,6 +206,7 @@
   box-shadow:
     0 0 40px rgba(0, 217, 255, 0.18),
     inset 0 0 30px rgba(255, 149, 0, 0.12);
+  max-height: 420px;
 }
 
 .employees-grid > div:first-child .futuristic-card {
@@ -245,7 +246,10 @@
 .filter-input,
 .filter-select,
 .clear-btn {
-  transition: transform 0.2s ease, box-shadow 0.25s ease, filter 0.25s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
 }
 
 .filter-input:hover,

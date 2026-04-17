@@ -33,38 +33,38 @@ const DashboardCards: React.FC = () => {
           </>
         ) : (
           <>
-        <article className="dashboard-card metric-card">
-          <div className="card-label">Total de empleados</div>
-          <div className="card-value">{totalEmployees}</div>
-        </article>
+            <article className="dashboard-card metric-card">
+              <div className="card-label">Total de empleados</div>
+              <div className="card-value">{totalEmployees}</div>
+            </article>
 
-        <article className="dashboard-card metric-card">
-          <div className="card-label">Promedio de salarios</div>
-          <div className="card-value">
-            {averageSalary.toLocaleString("es-AR", {
-              style: "currency",
-              currency: "ARS",
-              maximumFractionDigits: 0,
-            })}
-          </div>
-        </article>
+            <article className="dashboard-card metric-card">
+              <div className="card-label">Promedio de salarios</div>
+              <div className="card-value">
+                {averageSalary.toLocaleString("es-AR", {
+                  style: "currency",
+                  currency: "ARS",
+                  maximumFractionDigits: 0,
+                })}
+              </div>
+            </article>
 
-        <article className="dashboard-card department-card">
-          <div className="card-label">Empleados por departamento</div>
-          <div className="department-list">
-            {Object.entries(employeesByDepartment).length > 0 ? (
-              Object.entries(employeesByDepartment).map(
-                ([department, count]) => (
-                  <span key={department} className="department-chip">
-                    {department}: {count}
-                  </span>
-                ),
-              )
-            ) : (
-              <span className="department-chip empty">Sin empleados</span>
-            )}
-          </div>
-        </article>
+            <article className="dashboard-card department-card">
+              <div className="card-label">Empleados por departamento</div>
+              <div className="department-list">
+                {Object.entries(employeesByDepartment).length > 0 ? (
+                  Object.entries(employeesByDepartment).map(
+                    ([department, count]) => (
+                      <span key={department} className="department-chip">
+                        {department}: {count}
+                      </span>
+                    ),
+                  )
+                ) : (
+                  <span className="department-chip empty">Sin empleados</span>
+                )}
+              </div>
+            </article>
           </>
         )}
       </div>
