@@ -1,53 +1,207 @@
 /* components/EmployeeItem.css */
 
 .futuristic-card {
-  background: linear-gradient(
-    135deg,
-    rgba(15, 15, 30, 0.9) 0%,
-    rgba(26, 15, 46, 0.9) 100%
-  );
-  margin: 0.5rem;
-  border: 1px solid #ff9500;
-  border-radius: 10px;
-  padding: 20px;
+  background: linear-gradient(135deg, rgba(15, 15, 30, 0.9) 0%, rgba(26, 15, 46, 0.9) 100%);
+  border: 1px solid var(--warm-primary);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
   position: relative;
   overflow: hidden;
   box-shadow:
-    0 0 20px rgba(255, 149, 0, 0.2),
-    inset 0 0 20px rgba(255, 149, 0, 0.05);
-  transition: all 0.3s ease;
+    0 0 20px var(--warm-glow),
+    inset 0 0 20px var(--cold-glow);
+  transition: all 0.4s ease;
+  backdrop-filter: blur(15px);
+  animation: cardFadeIn 0.6s ease-out;
+}
+
+.futuristic-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cold-primary), var(--warm-primary), transparent);
+  opacity: 0.7;
+}
+
+.futuristic-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 50px;
+  height: 50px;
+  background: radial-gradient(circle, var(--cold-glow) 0%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0.3;
+  animation: cornerGlow 3s ease-in-out infinite;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cornerGlow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
 }
 
 .futuristic-card:hover {
-  border-color: #ffb700;
+  border-color: var(--cold-primary);
   box-shadow:
-    0 0 30px rgba(255, 149, 0, 0.4),
-    inset 0 0 30px rgba(255, 149, 0, 0.1);
-  transform: translateY(-4px);
+    0 0 35px var(--cold-glow),
+    inset 0 0 35px var(--warm-glow);
+  transform: translateY(-6px) scale(1.02);
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
   border-bottom: 1px solid rgba(255, 149, 0, 0.3);
+  position: relative;
+}
+
+.card-header::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cold-primary), transparent);
+  animation: headerLine 2s ease-in-out infinite;
+}
+
+@keyframes headerLine {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .employee-name {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
-  color: #ff9500;
+  color: var(--warm-primary);
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 1px;
-  text-shadow: 0 0 8px rgba(255, 149, 0, 0.4);
+  text-shadow: 0 0 10px var(--warm-glow);
+  position: relative;
+  z-index: 1;
 }
 
 .futuristic-delete-btn {
   background: rgba(255, 107, 53, 0.2);
-  border: 1px solid #ff6b35;
+  border: 1px solid var(--warm-accent);
+  color: var(--warm-accent);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.futuristic-delete-btn:hover {
+  background: rgba(255, 107, 53, 0.4);
+  box-shadow: 0 0 20px var(--warm-glow);
+  transform: scale(1.1) rotate(90deg);
+  color: var(--text-primary);
+}
+
+.department-label {
+  color: var(--cold-primary);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 16px 0;
+  opacity: 0.9;
+  font-weight: 600;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  background: rgba(0, 217, 255, 0.05);
+  border: 1px solid rgba(0, 217, 255, 0.2);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.info-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--cold-primary), var(--warm-primary));
+  border-radius: 8px 8px 0 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.info-item:hover {
+  background: rgba(0, 217, 255, 0.1);
+  border-color: var(--cold-primary);
+  box-shadow: 0 0 15px var(--cold-glow);
+  transform: translateY(-2px);
+}
+
+.info-item:hover::before {
+  opacity: 1;
+}
+
+.info-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.info-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--cold-secondary);
+  text-shadow: 0 0 8px var(--cold-glow);
+}
   color: #ff6b35;
   width: 32px;
   height: 32px;
