@@ -1,6 +1,6 @@
 // context/EmployeeContext.tsx
 import React, { createContext, useContext, useEffect, useState } from "react";
-import {  type Employee } from "../types/employee";
+import { type Employee } from "../types/employee";
 
 interface EmployeeContextType {
   employees: Employee[];
@@ -17,17 +17,37 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // Cargar desde localStorage
+  // Cargar desde localStorage (solo una vez al montar)
   useEffect(() => {
-    const data = localStorage.getItem("employees");
-    if (data) setEmployees(JSON.parse(data));
+    try {
+      const data = localStorage.getItem("employees");
+      if (data) {
+        const parsedData = JSON.parse(data);
+        console.log("Empleados cargados desde localStorage:", parsedData);
+        setEmployees(parsedData);
+      } else {
+        console.log("No hay empleados guardados en localStorage");
+      }
+    } catch (error) {
+      console.error("Error al cargar empleados desde localStorage:", error);
+      // Si hay error, mantener array vacío
+    }
+    setIsLoaded(true);
   }, []);
 
-  // Guardar en localStorage
+  // Guardar en localStorage (solo después de cargar inicialmente)
   useEffect(() => {
-    localStorage.setItem("employees", JSON.stringify(employees));
-  }, [employees]);
+    if (isLoaded) {
+      try {
+        localStorage.setItem("employees", JSON.stringify(employees));
+        console.log("Empleados guardados en localStorage:", employees);
+      } catch (error) {
+        console.error("Error al guardar empleados en localStorage:", error);
+      }
+    }
+  }, [employees, isLoaded]);
 
   const addEmployee = (emp: Employee) => {
     setEmployees((prev) => [...prev, emp]);
