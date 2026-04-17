@@ -124,7 +124,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
 
     if (employeeToEdit) {
       // Modo edición
-      updateEmployee({
+      const updated = updateEmployee({
         ...employeeToEdit,
         name: form.name,
         department: form.department,
@@ -132,10 +132,13 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
         startDate: form.startDate!.toISOString().split("T")[0],
         endDate: form.endDate!.toISOString().split("T")[0],
       });
-      onEditComplete?.();
+
+      if (updated) {
+        onEditComplete?.();
+      }
     } else {
       // Modo agregar
-      addEmployee({
+      const added = addEmployee({
         id: uuidv4(),
         name: form.name,
         department: form.department,
@@ -143,10 +146,12 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
         startDate: form.startDate!.toISOString().split("T")[0],
         endDate: form.endDate!.toISOString().split("T")[0],
       });
-    }
 
-    // Resetear formulario solo en modo agregar
-    if (!employeeToEdit) {
+      if (!added) {
+        return;
+      }
+
+      // Resetear formulario solo cuando se agrega correctamente
       setForm({
         name: "",
         department: "",

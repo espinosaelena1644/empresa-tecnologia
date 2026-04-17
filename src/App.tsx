@@ -5,6 +5,7 @@ import { EmployeeProvider } from "./context/EmployeeContext";
 import EmployeeForm from "./components/employee_form/EmployeeForm";
 import EmployeeList from "./components/employee_list/EmployeeList";
 import DashboardCards from "./components/dashboard/DashboardCards";
+import ToastNotifications from "./components/common/ToastNotifications";
 import "./App.css";
 
 type ThemeMode = "dark" | "light";
@@ -39,6 +40,7 @@ const App: React.FC = () => {
         transition={{ duration: 0.45, ease: "easeOut" }}
       >
         <div className="app-background" aria-hidden="true" />
+        <ToastNotifications />
 
         <div className="app-title-row">
           <h1 className="app-title">Gestión de Empleados</h1>

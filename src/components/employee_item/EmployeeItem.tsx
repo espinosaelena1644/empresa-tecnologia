@@ -28,7 +28,9 @@ const EmployeeItem: React.FC<{ employee: Employee }> = ({ employee }) => {
               ✏️
             </button>
             <button
-              onClick={() => deleteEmployee(employee.id)}
+              onClick={() => {
+                deleteEmployee(employee.id);
+              }}
               className="futuristic-delete-btn micro-press"
               title="Eliminar empleado"
             >
