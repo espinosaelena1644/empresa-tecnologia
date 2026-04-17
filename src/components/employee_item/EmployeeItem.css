@@ -1,7 +1,7 @@
 /* components/EmployeeItem.css */
 
 .futuristic-card {
-  background: linear-gradient(135deg, rgba(15, 15, 30, 0.9) 0%, rgba(26, 15, 46, 0.9) 100%);
+  background: linear-gradient(135deg, rgba(15, 15, 30, 0.95) 0%, rgba(26, 15, 46, 0.95) 100%);
   border: 1px solid var(--warm-primary);
   border-radius: 12px;
   padding: 24px;
@@ -11,9 +11,11 @@
   box-shadow:
     0 0 20px var(--warm-glow),
     inset 0 0 20px var(--cold-glow);
-  transition: all 0.4s ease;
+  transition: transform 0.35s ease, box-shadow 0.35s ease, max-height 0.35s ease;
   backdrop-filter: blur(15px);
   animation: cardFadeIn 0.6s ease-out;
+  max-height: 92px;
+  z-index: 1;
 }
 
 .futuristic-card::before {
@@ -65,9 +67,11 @@
 .futuristic-card:hover {
   border-color: var(--cold-primary);
   box-shadow:
-    0 0 35px var(--cold-glow),
+    0 0 45px var(--cold-glow),
     inset 0 0 35px var(--warm-glow);
-  transform: translateY(-6px) scale(1.02);
+  transform: translateY(-16px);
+  max-height: 380px;
+  z-index: 10;
 }
 
 .card-header {
@@ -144,6 +148,22 @@
   margin: 0 0 16px 0;
   opacity: 0.9;
   font-weight: 600;
+}
+
+.card-content {
+  opacity: 0;
+  transform: translateY(-16px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
+  height: 0;
+  overflow: hidden;
+}
+
+.futuristic-card:hover .card-content {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  height: auto;
 }
 
 .info-grid {

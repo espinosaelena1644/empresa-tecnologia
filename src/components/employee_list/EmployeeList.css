@@ -184,30 +184,40 @@
   gap: 0;
 }
 
-/* Separadores entre items */
-.employees-grid > div:not(:last-child) {
-  border-bottom: 1px solid rgba(0, 217, 255, 0.1);
-  margin-bottom: 0 !important;
-  border-radius: 0;
+.employees-grid > div:not(:first-child) {
+  margin-top: -56px;
 }
 
-.employees-grid > div:not(:last-child) .futuristic-card {
-  border-bottom: none;
-  border-left: none;
-  border-right: none;
-  border-top: none;
-  border-radius: 0;
-  box-shadow: none;
-  background: transparent;
-  margin-bottom: 0;
+.employees-grid > div {
+  position: relative;
 }
 
-.employees-grid > div:last-child .futuristic-card {
-  border-radius: 0 0 10px 10px;
+.employees-grid > div .futuristic-card {
+  border-radius: 14px;
+  box-shadow:
+    0 0 20px rgba(0, 0, 0, 0.18),
+    inset 0 0 18px rgba(255, 149, 0, 0.1);
+  background: rgba(10, 10, 20, 0.96);
+  max-height: 92px;
+  overflow: hidden;
+}
+
+.employees-grid > div .futuristic-card:hover {
+  box-shadow:
+    0 0 40px rgba(0, 217, 255, 0.18),
+    inset 0 0 30px rgba(255, 149, 0, 0.12);
 }
 
 .employees-grid > div:first-child .futuristic-card {
-  border-radius: 0;
+  margin-top: 0;
+}
+
+.employees-grid > div .futuristic-card {
+  z-index: 1;
+}
+
+.employees-grid > div .futuristic-card:hover {
+  z-index: 10;
 }
 
 /* Filtros */
@@ -428,38 +438,6 @@
   font-size: 14px;
   color: rgba(255, 149, 0, 0.5);
   margin: 0;
-}
-
-.employees-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0;
-}
-
-/* Línea separadora entre items */
-.employees-grid > div:not(:last-child) {
-  border-bottom: 1px solid rgba(255, 149, 0, 0.1);
-  margin-bottom: 0 !important;
-  border-radius: 0;
-}
-
-.employees-grid > div:not(:last-child) .futuristic-card {
-  border-bottom: none;
-  border-left: none;
-  border-right: none;
-  border-top: none;
-  border-radius: 0;
-  box-shadow: none;
-  background: transparent;
-  margin-bottom: 0;
-}
-
-.employees-grid > div:last-child .futuristic-card {
-  border-radius: 0 0 10px 10px;
-}
-
-.employees-grid > div:first-child .futuristic-card {
-  border-radius: 0;
 }
 
 @media (max-width: 768px) {
