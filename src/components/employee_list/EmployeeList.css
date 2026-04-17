@@ -1,0 +1,143 @@
+/* components/EmployeeList.css */
+
+.employee-list-container {
+  margin-top: 40px;
+  border: 1px solid rgba(255, 149, 0, 0.3);
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(15, 15, 30, 0.6) 0%,
+    rgba(26, 15, 46, 0.6) 100%
+  );
+  padding: 0;
+  overflow: hidden;
+  box-shadow:
+    0 0 30px rgba(255, 149, 0, 0.15),
+    inset 0 0 30px rgba(255, 149, 0, 0.03);
+  backdrop-filter: blur(10px);
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 2px solid rgba(255, 149, 0, 0.2);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 149, 0, 0.05) 0%,
+    transparent 50%,
+    rgba(255, 107, 53, 0.05) 100%
+  );
+}
+
+.list-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ff9500;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(255, 149, 0, 0.4);
+}
+
+.employee-count {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ff9500, #ffb700);
+  color: #0a0a15;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 16px;
+  box-shadow: 0 0 15px rgba(255, 149, 0, 0.4);
+}
+
+.list-content {
+  padding: 24px;
+  min-height: 200px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  text-align: center;
+}
+
+.empty-message {
+  font-size: 20px;
+  font-weight: 600;
+  color: rgba(255, 149, 0, 0.7);
+  margin: 0 0 8px 0;
+  text-shadow: 0 0 8px rgba(255, 149, 0, 0.2);
+}
+
+.empty-hint {
+  font-size: 14px;
+  color: rgba(255, 149, 0, 0.5);
+  margin: 0;
+}
+
+.employees-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+/* Línea separadora entre items */
+.employees-grid > div:not(:last-child) {
+  border-bottom: 1px solid rgba(255, 149, 0, 0.1);
+  margin-bottom: 0 !important;
+  border-radius: 0;
+}
+
+.employees-grid > div:not(:last-child) .futuristic-card {
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  margin-bottom: 0;
+}
+
+.employees-grid > div:last-child .futuristic-card {
+  border-radius: 0 0 10px 10px;
+}
+
+.employees-grid > div:first-child .futuristic-card {
+  border-radius: 0;
+}
+
+@media (max-width: 768px) {
+  .list-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .list-title {
+    font-size: 20px;
+  }
+
+  .employee-count {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .list-content {
+    padding: 16px;
+  }
+}
