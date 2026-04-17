@@ -204,7 +204,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       <div className="mb-3">
         <DatePicker
           selected={form.startDate}
-          onChange={(date) => handleDateChange(date, "startDate")}
+          onChange={(date:any) => handleDateChange(date, "startDate")}
           dateFormat="dd/MM/yyyy"
           placeholderText="Fecha de inicio"
           className={`futuristic-input ${errors.startDate ? "input-error" : ""}`}
@@ -218,7 +218,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       <div className="mb-3">
         <DatePicker
           selected={form.endDate}
-          onChange={(date) => handleDateChange(date, "endDate")}
+          onChange={(date:any) => handleDateChange(date, "endDate")}
           dateFormat="dd/MM/yyyy"
           placeholderText="Fecha de fin"
           className={`futuristic-input ${errors.endDate || errors.dateRange ? "input-error" : ""}`}

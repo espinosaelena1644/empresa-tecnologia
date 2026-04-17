@@ -34,9 +34,9 @@ const DashboardCards: React.FC = () => {
         <article className="dashboard-card metric-card">
           <div className="card-label">Promedio de salarios</div>
           <div className="card-value">
-            {averageSalary.toLocaleString("es-ES", {
+            {averageSalary.toLocaleString("es-AR", {
               style: "currency",
-              currency: "EUR",
+              currency: "ARS",
               maximumFractionDigits: 0,
             })}
           </div>
