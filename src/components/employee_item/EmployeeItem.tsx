@@ -7,7 +7,7 @@ import EmployeeForm from "../employee_form/EmployeeForm";
 import "./EmployeeItem.css";
 
 const EmployeeItem: React.FC<{ employee: Employee }> = ({ employee }) => {
-  const { deleteEmployee, isAuthenticated, currentUserUid } = useEmployees();
+  const { deleteEmployee, isAuthenticated } = useEmployees();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const canManageEmployee = isAuthenticated;
 
