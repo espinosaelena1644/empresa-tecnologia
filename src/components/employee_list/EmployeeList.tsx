@@ -72,7 +72,7 @@ const EmployeeList: React.FC = () => {
 
   // Departamentos únicos para el select
   const uniqueDepartments = useMemo(() => {
-    const departments = employees.map((emp) => emp.department);
+    const departments = employees.map((emp) => emp.department).filter(Boolean);
     return [...new Set(departments)].sort();
   }, [employees]);
 
@@ -161,7 +161,7 @@ const EmployeeList: React.FC = () => {
           </div>
         ) : (
           <AnimatePresence mode="popLayout">
-            <motion.div className="employees-grid" layout>
+            <motion.div key="employees-grid" className="employees-grid" layout>
               {visibleEmployees.map((emp) => (
                 <motion.div
                   key={emp.id}

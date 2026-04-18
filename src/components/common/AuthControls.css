@@ -102,6 +102,47 @@
   font-weight: 600;
 }
 
+.user-floating-card {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  min-width: 220px;
+  max-width: min(320px, calc(100vw - 32px));
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--cold-primary), #fff 18%);
+  border-radius: 16px;
+  background: linear-gradient(
+    150deg,
+    color-mix(in srgb, var(--panel-bg-soft), #fff 2%) 0%,
+    color-mix(in srgb, var(--panel-bg-end), #000 8%) 100%
+  );
+  box-shadow:
+    0 14px 28px color-mix(in srgb, var(--bg-dark-1), #000 50%),
+    0 0 18px var(--cold-glow);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 35;
+}
+
+.user-floating-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.user-floating-name {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  color: var(--text-primary);
+  text-shadow: 0 0 14px var(--cold-glow);
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 768px) {
   .auth-controls {
     width: 100%;
@@ -116,5 +157,13 @@
     position: static;
     margin-top: 10px;
     width: 100%;
+  }
+
+  .user-floating-card {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    min-width: 0;
+    max-width: none;
   }
 }

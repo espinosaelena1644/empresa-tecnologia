@@ -6,4 +6,7 @@ export interface Employee {
   salary: number;
   startDate: string;
   endDate: string;
+  addedByUid?: string;
+  addedByName?: string;
+  addedByEmail?: string;
 }
