@@ -17,7 +17,8 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
   employeeToEdit,
   onEditComplete,
 }) => {
-  const { addEmployee, updateEmployee, isLoading } = useEmployees();
+  const { addEmployee, updateEmployee, isLoading, isAuthenticated } =
+    useEmployees();
 
   const [form, setForm] = useState<{
     name: string;
@@ -119,6 +120,10 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!isAuthenticated) {
+      return;
+    }
+
     if (!validateForm()) {
       return;
     }
@@ -177,6 +182,12 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       <h2 className="form-title">
         {employeeToEdit ? "Editar Empleado" : "Agregar Empleado"}
       </h2>
+
+      {!isAuthenticated && (
+        <div className="error-message auth-required-message">
+          Inicia sesion para agregar o editar empleados.
+        </div>
+      )}
 
       <div className="mb-3">
         <input
@@ -254,8 +265,16 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
         )}
       </div>
 
-      <button type="submit" className="futuristic-btn micro-press">
-        {employeeToEdit ? "Actualizar" : "Guardar"}
+      <button
+        type="submit"
+        className="futuristic-btn micro-press"
+        disabled={!isAuthenticated}
+      >
+        {!isAuthenticated
+          ? "Inicia sesion para continuar"
+          : employeeToEdit
+            ? "Actualizar"
+            : "Guardar"}
       </button>
     </form>
   );

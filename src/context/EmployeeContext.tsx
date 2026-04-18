@@ -21,6 +21,8 @@ interface EmployeeContextType {
   notifications: ToastNotification[];
   removeNotification: (id: string) => void;
   isLoading: boolean;
+  isAuthenticated: boolean;
+  currentUserUid: string | null;
 }
 
 const EmployeeContext = createContext<EmployeeContextType | undefined>(
@@ -33,10 +35,9 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [notifications, setNotifications] = useState<ToastNotification[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isAuthReady, setIsAuthReady] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const getCacheKey = (uid: string) => `employees:${uid}`;
+  const getCacheKey = () => "employees:public";
 
   const removeNotification = (id: string) => {
     setNotifications((prev) =>
@@ -54,9 +55,9 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     }, 4000);
   };
 
-  const loadEmployeesFromLocalCache = (uid: string) => {
+  const loadEmployeesFromLocalCache = () => {
     try {
-      const data = localStorage.getItem(getCacheKey(uid));
+      const data = localStorage.getItem(getCacheKey());
       if (data) {
         const parsedData = JSON.parse(data);
         console.log("Empleados cargados desde localStorage:", parsedData);
@@ -70,33 +71,29 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
-      setIsAuthReady(true);
       setIsLoaded(false);
     });
 
     return () => unsubscribe();
   }, []);
 
-  // Suscribirse a empleados del usuario autenticado y usar localStorage como fallback
+  // Suscribirse a todos los empleados para lectura publica
   useEffect(() => {
-    if (!isAuthReady) {
-      return;
-    }
-
-    if (!currentUser) {
-      setEmployees([]);
-      setIsLoaded(true);
-      return;
-    }
-
-    const employeesRef = ref(db, `employees/${currentUser.uid}`);
+    const employeesRef = ref(db, "employees");
 
     const unsubscribe = onValue(
       employeesRef,
       (snapshot) => {
         const data = snapshot.val();
         if (data) {
-          const list = Object.values(data) as Employee[];
+          const list = Object.entries(
+            data as Record<string, Record<string, Employee>>,
+          ).flatMap(([ownerUid, employeeMap]) =>
+            Object.values(employeeMap ?? {}).map((employee) => ({
+              ...employee,
+              addedByUid: employee.addedByUid ?? ownerUid,
+            })),
+          );
           setEmployees(list);
         } else {
           setEmployees([]);
@@ -105,28 +102,25 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
       },
       (error) => {
         console.error("Error al cargar empleados desde Firebase:", error);
-        loadEmployeesFromLocalCache(currentUser.uid);
+        loadEmployeesFromLocalCache();
         setIsLoaded(true);
       },
     );
 
     return () => unsubscribe();
-  }, [currentUser, isAuthReady]);
+  }, []);
 
-  // Mantener una copia local como cache/offline
+  // Mantener una copia local publica como cache/offline
   useEffect(() => {
-    if (isLoaded && currentUser) {
+    if (isLoaded) {
       try {
-        localStorage.setItem(
-          getCacheKey(currentUser.uid),
-          JSON.stringify(employees),
-        );
+        localStorage.setItem(getCacheKey(), JSON.stringify(employees));
         console.log("Empleados guardados en localStorage:", employees);
       } catch (error) {
         console.error("Error al guardar empleados en localStorage:", error);
       }
     }
-  }, [employees, isLoaded, currentUser]);
+  }, [employees, isLoaded]);
 
   const addEmployee = async (emp: Employee) => {
     if (!currentUser) {
@@ -200,17 +194,24 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
 
     try {
       const existingEmployee = employees.find((emp) => emp.id === updated.id);
+      const ownerUid = existingEmployee?.addedByUid ?? updated.addedByUid;
+
+      if (!ownerUid || ownerUid !== currentUser.uid) {
+        pushNotification(
+          "error",
+          "Solo el administrador que lo agrego puede editar este empleado.",
+        );
+        return false;
+      }
+
       const employeeToSave: Employee = {
         ...updated,
-        addedByUid: existingEmployee?.addedByUid,
+        addedByUid: ownerUid,
         addedByName: existingEmployee?.addedByName,
         addedByEmail: existingEmployee?.addedByEmail,
       };
 
-      await set(
-        ref(db, `employees/${currentUser.uid}/${updated.id}`),
-        employeeToSave,
-      );
+      await set(ref(db, `employees/${ownerUid}/${updated.id}`), employeeToSave);
       pushNotification(
         "success",
         `Empleado ${updated.name} actualizado correctamente.`,
@@ -242,8 +243,17 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
       return false;
     }
 
+    const ownerUid = employeeToDelete.addedByUid;
+    if (!ownerUid || ownerUid !== currentUser.uid) {
+      pushNotification(
+        "error",
+        "Solo el administrador que lo agrego puede eliminar este empleado.",
+      );
+      return false;
+    }
+
     try {
-      await remove(ref(db, `employees/${currentUser.uid}/${id}`));
+      await remove(ref(db, `employees/${ownerUid}/${id}`));
       pushNotification(
         "success",
         `Empleado ${employeeToDelete.name} eliminado.`,
@@ -269,6 +279,8 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
         notifications,
         removeNotification,
         isLoading: !isLoaded,
+        isAuthenticated: Boolean(currentUser),
+        currentUserUid: currentUser?.uid ?? null,
       }}
     >
       {children}

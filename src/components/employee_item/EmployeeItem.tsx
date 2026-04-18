@@ -7,8 +7,10 @@ import EmployeeForm from "../employee_form/EmployeeForm";
 import "./EmployeeItem.css";
 
 const EmployeeItem: React.FC<{ employee: Employee }> = ({ employee }) => {
-  const { deleteEmployee } = useEmployees();
+  const { deleteEmployee, isAuthenticated, currentUserUid } = useEmployees();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const canManageEmployee =
+    isAuthenticated && currentUserUid === (employee.addedByUid ?? null);
 
   const getAddedBy = () => {
     if (employee.addedByName?.trim()) {
@@ -32,24 +34,26 @@ const EmployeeItem: React.FC<{ employee: Employee }> = ({ employee }) => {
       <div className="futuristic-card">
         <div className="card-header">
           <h5 className="employee-name">{employee.name}</h5>
-          <div className="card-actions">
-            <button
-              onClick={() => setIsEditModalOpen(true)}
-              className="futuristic-edit-btn micro-press"
-              title="Editar empleado"
-            >
-              ✏️
-            </button>
-            <button
-              onClick={async () => {
-                await deleteEmployee(employee.id);
-              }}
-              className="futuristic-delete-btn micro-press"
-              title="Eliminar empleado"
-            >
-              ✕
-            </button>
-          </div>
+          {canManageEmployee && (
+            <div className="card-actions">
+              <button
+                onClick={() => setIsEditModalOpen(true)}
+                className="futuristic-edit-btn micro-press"
+                title="Editar empleado"
+              >
+                ✏️
+              </button>
+              <button
+                onClick={async () => {
+                  await deleteEmployee(employee.id);
+                }}
+                className="futuristic-delete-btn micro-press"
+                title="Eliminar empleado"
+              >
+                ✕
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="card-content">
