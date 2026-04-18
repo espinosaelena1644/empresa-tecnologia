@@ -89,8 +89,8 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
     }
   }, [employeeToEdit]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
     setForm({
       ...form,
       [name]: name === "salary" ? Number(value) : value,
@@ -202,14 +202,22 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       </div>
 
       <div className="mb-3">
-        <input
+        <select
+          data-debug="department-select"
           name="department"
-          placeholder="Departamento"
           className={`futuristic-input ${errors.department ? "input-error" : ""}`}
           value={form.department}
           onChange={handleChange}
           required
-        />
+        >
+          <option value="">Selecciona un rol</option>
+          <option value="Desarrollador Frontend">Desarrollador Frontend</option>
+          <option value="Desarrollador Backend">Desarrollador Backend</option>
+          <option value="Ingeniero DevOps">Ingeniero DevOps</option>
+          <option value="QA Tester">QA Tester</option>
+          <option value="Product Manager">Product Manager</option>
+          <option value="Diseñador UX/UI">Diseñador UX/UI</option>
+        </select>
         {errors.department && (
           <div className="error-message">{errors.department}</div>
         )}
