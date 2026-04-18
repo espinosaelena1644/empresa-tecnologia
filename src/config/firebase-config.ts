@@ -20,7 +20,6 @@ if (missingEnvVars.length > 0) {
   );
 }
 
-// Configuración de Firebase cargada desde variables de entorno (Vite)
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -32,13 +31,10 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-// Inicializar y exportar Firestore y la colección que usarás
 const db = getFirestore(app);
 const employeesCollection = collection(db, "employees");
 
-// Exportar para usar en el proyecto
 export { app, analytics, db, employeesCollection };
