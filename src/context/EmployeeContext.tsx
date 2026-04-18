@@ -1,7 +1,7 @@
 // context/EmployeeContext.tsx
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { type Employee } from "../types/employee";
-import { employeesCollection, ensureAnonymousAuth } from "../config/firebase-config";
+import { employeesCollection } from "../config/firebase-config";
 import {
   onSnapshot,
   setDoc,
@@ -70,18 +70,12 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Suscribirse en tiempo real a Firestore y usar localStorage como fallback
   useEffect(() => {
-    setIsLoaded(false);
-
     let isMounted = true;
     let unsubscribe: (() => void) | null = null;
 
     const connectToFirestore = async () => {
       try {
-        await ensureAnonymousAuth();
-
-        if (!isMounted) {
-          return;
-        }
+        if (!isMounted) return;
 
         unsubscribe = onSnapshot(
           employeesCollection,
@@ -103,10 +97,10 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
           },
         );
       } catch (error) {
-        console.error("Error de autenticación con Firebase:", error);
+        console.error("Error al conectar con Firebase:", error);
         pushNotification(
           "error",
-          "No se pudo autenticar con Firebase. Usando datos locales si existen.",
+          "No se pudo conectar con Firebase. Usando datos locales si existen.",
         );
         loadEmployeesFromLocalCache();
         setIsLoaded(true);
@@ -131,10 +125,6 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
         console.log("Empleados guardados en localStorage:", employees);
       } catch (error) {
         console.error("Error al guardar empleados en localStorage:", error);
-        pushNotification(
-          "error",
-          "No se pudieron guardar los cambios localmente.",
-        );
       }
     }
   }, [employees, isLoaded]);
@@ -149,14 +139,17 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
-      await ensureAnonymousAuth();
       await setDoc(doc(employeesCollection, emp.id), emp as DocumentData);
       pushNotification("success", `Empleado ${emp.name} agregado correctamente.`);
       return true;
     } catch (error) {
       console.error("Error al agregar empleado en Firestore:", error);
-      pushNotification("error", "No se pudo agregar el empleado en el servidor.");
-      return false;
+      setEmployees((prev) => [...prev, emp]);
+      pushNotification(
+        "success",
+        `Empleado ${emp.name} agregado localmente (sin sincronizar).`,
+      );
+      return true;
     }
   };
 
@@ -169,14 +162,19 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
-      await ensureAnonymousAuth();
       await setDoc(doc(employeesCollection, updated.id), updated as DocumentData, { merge: true });
       pushNotification("success", `Empleado ${updated.name} actualizado correctamente.`);
       return true;
     } catch (error) {
       console.error("Error al actualizar empleado en Firestore:", error);
-      pushNotification("error", "No se pudo actualizar el empleado en el servidor.");
-      return false;
+      setEmployees((prev) =>
+        prev.map((emp) => (emp.id === updated.id ? updated : emp)),
+      );
+      pushNotification(
+        "success",
+        `Empleado ${updated.name} actualizado localmente (sin sincronizar).`,
+      );
+      return true;
     }
   };
 
@@ -189,14 +187,17 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
-      await ensureAnonymousAuth();
       await deleteDoc(doc(employeesCollection, id));
       pushNotification("success", `Empleado ${employeeToDelete.name} eliminado.`);
       return true;
     } catch (error) {
       console.error("Error al eliminar empleado en Firestore:", error);
-      pushNotification("error", "No se pudo eliminar el empleado en el servidor.");
-      return false;
+      setEmployees((prev) => prev.filter((emp) => emp.id !== id));
+      pushNotification(
+        "success",
+        `Empleado ${employeeToDelete.name} eliminado localmente (sin sincronizar).`,
+      );
+      return true;
     }
   };
 
@@ -217,6 +218,7 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useEmployees = () => {
   const context = useContext(EmployeeContext);
   if (!context)

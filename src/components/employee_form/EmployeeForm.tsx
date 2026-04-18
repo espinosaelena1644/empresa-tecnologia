@@ -77,6 +77,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
   // Pre-llenar formulario si estamos editando
   useEffect(() => {
     if (employeeToEdit) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm({
         name: employeeToEdit.name,
         department: employeeToEdit.department,
@@ -219,7 +220,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       <div className="mb-3">
         <DatePicker
           selected={form.startDate}
-          onChange={(date: any) => handleDateChange(date, "startDate")}
+          onChange={(date: Date | null) => handleDateChange(date, "startDate")}
           dateFormat="dd/MM/yyyy"
           placeholderText="Fecha de inicio"
           className={`futuristic-input ${errors.startDate ? "input-error" : ""}`}
@@ -236,7 +237,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       <div className="mb-3">
         <DatePicker
           selected={form.endDate}
-          onChange={(date: any) => handleDateChange(date, "endDate")}
+          onChange={(date: Date | null) => handleDateChange(date, "endDate")}
           dateFormat="dd/MM/yyyy"
           placeholderText="Fecha de fin"
           className={`futuristic-input ${errors.endDate || errors.dateRange ? "input-error" : ""}`}

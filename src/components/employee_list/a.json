@@ -1,0 +1,11 @@
+{
+  "rules": {
+    ".read": true,
+    ".write": true,
+    "employees": {
+      "$employeeId": {
+        ".validate": "newData.hasChildren(['id','name','department','salary']) && newData.child('id').isString() && newData.child('name').isString() && newData.child('name').val().length > 0 && newData.child('name').val().length <= 100 && newData.child('department').isString() && newData.child('department').val().length > 0 && newData.child('department').val().length <= 100 && newData.child('salary').isNumber() && newData.child('salary').val() >= 0"
+      }
+    }
+  }
+}

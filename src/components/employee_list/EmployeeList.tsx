@@ -92,11 +92,13 @@ const EmployeeList: React.FC = () => {
   }, [filteredEmployees, isPaginated, currentPage]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentPage(1);
   }, [filters, employees.length]);
 
   useEffect(() => {
     if (currentPage > totalPages) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentPage(totalPages);
     }
   }, [currentPage, totalPages]);

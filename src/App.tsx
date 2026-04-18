@@ -13,14 +13,12 @@ type ThemeMode = "dark" | "light";
 const THEME_STORAGE_KEY = "employee-theme";
 
 const App: React.FC = () => {
-  const [theme, setTheme] = useState<ThemeMode>("dark");
-
-  useEffect(() => {
+  const [theme, setTheme] = useState<ThemeMode>(() => {
     const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-    if (storedTheme === "dark" || storedTheme === "light") {
-      setTheme(storedTheme);
-    }
-  }, []);
+    return storedTheme === "dark" || storedTheme === "light"
+      ? storedTheme
+      : "dark";
+  });
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);

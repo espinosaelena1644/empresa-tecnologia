@@ -1,6 +1,5 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, signInAnonymously } from "firebase/auth";
 import { getFirestore, collection } from "firebase/firestore";
 
 const requiredEnvVars = [
@@ -34,18 +33,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
-const auth = getAuth(app);
 
 const db = getFirestore(app);
 const employeesCollection = collection(db, "employees");
 
-const ensureAnonymousAuth = async () => {
-  if (auth.currentUser) {
-    return auth.currentUser;
-  }
-
-  const credential = await signInAnonymously(auth);
-  return credential.user;
-};
-
-export { app, analytics, auth, db, employeesCollection, ensureAnonymousAuth };
+export { app, analytics, db, employeesCollection };
