@@ -192,6 +192,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
 
       <div className="mb-3">
         <select
+          data-debug="department-select"
           name="department"
           className={`futuristic-input ${errors.department ? "input-error" : ""}`}
           value={form.department}
