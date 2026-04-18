@@ -6,17 +6,34 @@ import { getFirestore, collection } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const requiredEnvVars = [
+  "VITE_FIREBASE_API_KEY",
+  "VITE_FIREBASE_AUTH_DOMAIN",
+  "VITE_FIREBASE_DATABASE_URL",
+  "VITE_FIREBASE_PROJECT_ID",
+  "VITE_FIREBASE_STORAGE_BUCKET",
+  "VITE_FIREBASE_MESSAGING_SENDER_ID",
+  "VITE_FIREBASE_APP_ID",
+] as const;
+
+const missingEnvVars = requiredEnvVars.filter((key) => !import.meta.env[key]);
+
+if (missingEnvVars.length > 0) {
+  throw new Error(
+    `Faltan variables de entorno de Firebase: ${missingEnvVars.join(", ")}`,
+  );
+}
+
+// Configuración de Firebase cargada desde variables de entorno (Vite)
 const firebaseConfig = {
-  apiKey: "AIzaSyCvGldYhrFkWOhujFceIiZD-VzCQTpDDIg",
-  authDomain: "gestion-de-empleados-e937b.firebaseapp.com",
-  databaseURL: "https://gestion-de-empleados-e937b-default-rtdb.firebaseio.com",
-  projectId: "gestion-de-empleados-e937b",
-  storageBucket: "gestion-de-empleados-e937b.firebasestorage.app", // <-- verificar si debería ser "...appspot.com"
-  messagingSenderId: "250189072295",
-  appId: "1:250189072295:web:d111a7665cb3cc4e06d882",
-  measurementId: "G-HT5RWTP7W6",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
