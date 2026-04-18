@@ -1,13 +1,9 @@
 // context/EmployeeContext.tsx
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { type Employee } from "../types/employee";
-import { db } from "../config/firebase-config";
-import {
-  ref,
-  onValue,
-  set,
-  remove,
-} from "firebase/database";
+import { type User, onAuthStateChanged } from "firebase/auth";
+import { auth, db } from "../config/firebase-config";
+import { ref, onValue, set, remove } from "firebase/database";
 
 type NotificationType = "success" | "error";
 
@@ -36,7 +32,11 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [notifications, setNotifications] = useState<ToastNotification[]>([]);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isAuthReady, setIsAuthReady] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const getCacheKey = (uid: string) => `employees:${uid}`;
 
   const removeNotification = (id: string) => {
     setNotifications((prev) =>
@@ -54,9 +54,9 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     }, 4000);
   };
 
-  const loadEmployeesFromLocalCache = () => {
+  const loadEmployeesFromLocalCache = (uid: string) => {
     try {
-      const data = localStorage.getItem("employees");
+      const data = localStorage.getItem(getCacheKey(uid));
       if (data) {
         const parsedData = JSON.parse(data);
         console.log("Empleados cargados desde localStorage:", parsedData);
@@ -67,9 +67,29 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  // Suscribirse en tiempo real a Realtime Database y usar localStorage como fallback
   useEffect(() => {
-    const employeesRef = ref(db, "employees");
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      setIsAuthReady(true);
+      setIsLoaded(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Suscribirse a empleados del usuario autenticado y usar localStorage como fallback
+  useEffect(() => {
+    if (!isAuthReady) {
+      return;
+    }
+
+    if (!currentUser) {
+      setEmployees([]);
+      setIsLoaded(true);
+      return;
+    }
+
+    const employeesRef = ref(db, `employees/${currentUser.uid}`);
 
     const unsubscribe = onValue(
       employeesRef,
@@ -85,27 +105,35 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
       },
       (error) => {
         console.error("Error al cargar empleados desde Firebase:", error);
-        loadEmployeesFromLocalCache();
+        loadEmployeesFromLocalCache(currentUser.uid);
         setIsLoaded(true);
       },
     );
 
     return () => unsubscribe();
-  }, []);
+  }, [currentUser, isAuthReady]);
 
   // Mantener una copia local como cache/offline
   useEffect(() => {
-    if (isLoaded) {
+    if (isLoaded && currentUser) {
       try {
-        localStorage.setItem("employees", JSON.stringify(employees));
+        localStorage.setItem(
+          getCacheKey(currentUser.uid),
+          JSON.stringify(employees),
+        );
         console.log("Empleados guardados en localStorage:", employees);
       } catch (error) {
         console.error("Error al guardar empleados en localStorage:", error);
       }
     }
-  }, [employees, isLoaded]);
+  }, [employees, isLoaded, currentUser]);
 
   const addEmployee = async (emp: Employee) => {
+    if (!currentUser) {
+      pushNotification("error", "Debes iniciar sesion para agregar empleados.");
+      return false;
+    }
+
     if (!emp.name.trim() || !emp.department.trim() || emp.salary <= 0) {
       pushNotification(
         "error",
@@ -115,17 +143,31 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
-      await set(ref(db, `employees/${emp.id}`), emp);
-      pushNotification("success", `Empleado ${emp.name} agregado correctamente.`);
+      await set(ref(db, `employees/${currentUser.uid}/${emp.id}`), emp);
+      pushNotification(
+        "success",
+        `Empleado ${emp.name} agregado correctamente.`,
+      );
       return true;
     } catch (error) {
       console.error("Error al agregar empleado en Firebase:", error);
-      pushNotification("error", "No se pudo agregar el empleado en el servidor.");
+      pushNotification(
+        "error",
+        "No se pudo agregar el empleado en el servidor.",
+      );
       return false;
     }
   };
 
   const updateEmployee = async (updated: Employee) => {
+    if (!currentUser) {
+      pushNotification(
+        "error",
+        "Debes iniciar sesion para actualizar empleados.",
+      );
+      return false;
+    }
+
     const exists = employees.some((emp) => emp.id === updated.id);
 
     if (!exists) {
@@ -134,17 +176,31 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
-      await set(ref(db, `employees/${updated.id}`), updated);
-      pushNotification("success", `Empleado ${updated.name} actualizado correctamente.`);
+      await set(ref(db, `employees/${currentUser.uid}/${updated.id}`), updated);
+      pushNotification(
+        "success",
+        `Empleado ${updated.name} actualizado correctamente.`,
+      );
       return true;
     } catch (error) {
       console.error("Error al actualizar empleado en Firebase:", error);
-      pushNotification("error", "No se pudo actualizar el empleado en el servidor.");
+      pushNotification(
+        "error",
+        "No se pudo actualizar el empleado en el servidor.",
+      );
       return false;
     }
   };
 
   const deleteEmployee = async (id: string) => {
+    if (!currentUser) {
+      pushNotification(
+        "error",
+        "Debes iniciar sesion para eliminar empleados.",
+      );
+      return false;
+    }
+
     const employeeToDelete = employees.find((emp) => emp.id === id);
 
     if (!employeeToDelete) {
@@ -153,12 +209,18 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
-      await remove(ref(db, `employees/${id}`));
-      pushNotification("success", `Empleado ${employeeToDelete.name} eliminado.`);
+      await remove(ref(db, `employees/${currentUser.uid}/${id}`));
+      pushNotification(
+        "success",
+        `Empleado ${employeeToDelete.name} eliminado.`,
+      );
       return true;
     } catch (error) {
       console.error("Error al eliminar empleado en Firebase:", error);
-      pushNotification("error", "No se pudo eliminar el empleado en el servidor.");
+      pushNotification(
+        "error",
+        "No se pudo eliminar el empleado en el servidor.",
+      );
       return false;
     }
   };
