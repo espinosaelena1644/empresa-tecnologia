@@ -71,7 +71,6 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
-      setIsLoaded(false);
     });
 
     return () => unsubscribe();
@@ -89,10 +88,13 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
           const list = Object.entries(
             data as Record<string, Record<string, Employee>>,
           ).flatMap(([ownerUid, employeeMap]) =>
-            Object.values(employeeMap ?? {}).map((employee) => ({
-              ...employee,
-              addedByUid: employee.addedByUid ?? ownerUid,
-            })),
+            Object.entries(employeeMap ?? {})
+              .map(([firebaseKey, employee]) => ({
+                ...employee,
+                id: employee.id ?? firebaseKey,
+                addedByUid: employee.addedByUid ?? ownerUid,
+              }))
+              .filter((emp) => emp.name?.trim()),
           );
           setEmployees(list);
         } else {
@@ -194,15 +196,8 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
 
     try {
       const existingEmployee = employees.find((emp) => emp.id === updated.id);
-      const ownerUid = existingEmployee?.addedByUid ?? updated.addedByUid;
-
-      if (!ownerUid || ownerUid !== currentUser.uid) {
-        pushNotification(
-          "error",
-          "Solo el administrador que lo agrego puede editar este empleado.",
-        );
-        return false;
-      }
+      const ownerUid =
+        existingEmployee?.addedByUid ?? updated.addedByUid ?? currentUser.uid;
 
       const employeeToSave: Employee = {
         ...updated,
@@ -243,14 +238,7 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
       return false;
     }
 
-    const ownerUid = employeeToDelete.addedByUid;
-    if (!ownerUid || ownerUid !== currentUser.uid) {
-      pushNotification(
-        "error",
-        "Solo el administrador que lo agrego puede eliminar este empleado.",
-      );
-      return false;
-    }
+    const ownerUid = employeeToDelete.addedByUid ?? currentUser.uid;
 
     try {
       await remove(ref(db, `employees/${ownerUid}/${id}`));

@@ -9,8 +9,7 @@ import "./EmployeeItem.css";
 const EmployeeItem: React.FC<{ employee: Employee }> = ({ employee }) => {
   const { deleteEmployee, isAuthenticated, currentUserUid } = useEmployees();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const canManageEmployee =
-    isAuthenticated && currentUserUid === (employee.addedByUid ?? null);
+  const canManageEmployee = isAuthenticated;
 
   const getAddedBy = () => {
     if (employee.addedByName?.trim()) {
@@ -63,7 +62,7 @@ const EmployeeItem: React.FC<{ employee: Employee }> = ({ employee }) => {
             <div className="info-item">
               <span className="info-label">Salario</span>
               <span className="info-value">
-                ${employee.salary.toLocaleString()}
+                ${(employee.salary ?? 0).toLocaleString()}
               </span>
             </div>
             <div className="info-item">
