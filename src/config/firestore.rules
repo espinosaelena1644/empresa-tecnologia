@@ -13,9 +13,8 @@ service cloud.firestore {
       allow delete: if isSignedIn();
 
       function validEmployee(data) {
-        return
-          // campos obligatorios
-          data.keys().hasAll(['id','name','department','salary']) &&
+        // campos obligatorios
+        return data.keys().hasAll(['id','name','department','salary']) &&
           // tipos y límites básicos
           data.id is string &&
           data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&

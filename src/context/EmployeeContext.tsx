@@ -1,7 +1,7 @@
 // context/EmployeeContext.tsx
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { type Employee } from "../types/employee";
-import { db, employeesCollection } from "../config/firebase-config";
+import { employeesCollection, ensureAnonymousAuth } from "../config/firebase-config";
 import {
   onSnapshot,
   setDoc,
@@ -55,40 +55,72 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     }, 4000);
   };
 
+  const loadEmployeesFromLocalCache = () => {
+    try {
+      const data = localStorage.getItem("employees");
+      if (data) {
+        const parsedData = JSON.parse(data);
+        console.log("Empleados cargados desde localStorage:", parsedData);
+        setEmployees(parsedData);
+      }
+    } catch (error) {
+      console.error("Error leyendo localStorage como fallback:", error);
+    }
+  };
+
   // Suscribirse en tiempo real a Firestore y usar localStorage como fallback
   useEffect(() => {
     setIsLoaded(false);
 
-    const unsubscribe = onSnapshot(
-      employeesCollection,
-      (snapshot) => {
-        const serverEmployees = snapshot.docs.map((d) => d.data() as Employee);
-        setEmployees(serverEmployees);
-        setIsLoaded(true);
-      },
-      (error) => {
-        console.error("Error al cargar empleados desde Firestore:", error);
-        pushNotification(
-          "error",
-          "No se pudieron cargar los empleados desde el servidor. Usando datos locales si existen.",
-        );
+    let isMounted = true;
+    let unsubscribe: (() => void) | null = null;
 
-        try {
-          const data = localStorage.getItem("employees");
-          if (data) {
-            const parsedData = JSON.parse(data);
-            console.log("Empleados cargados desde localStorage:", parsedData);
-            setEmployees(parsedData);
-          }
-        } catch (e) {
-          console.error("Error leyendo localStorage como fallback:", e);
+    const connectToFirestore = async () => {
+      try {
+        await ensureAnonymousAuth();
+
+        if (!isMounted) {
+          return;
         }
 
+        unsubscribe = onSnapshot(
+          employeesCollection,
+          (snapshot) => {
+            const serverEmployees = snapshot.docs.map(
+              (d) => d.data() as Employee,
+            );
+            setEmployees(serverEmployees);
+            setIsLoaded(true);
+          },
+          (error) => {
+            console.error("Error al cargar empleados desde Firestore:", error);
+            pushNotification(
+              "error",
+              "No se pudieron cargar los empleados desde el servidor. Usando datos locales si existen.",
+            );
+            loadEmployeesFromLocalCache();
+            setIsLoaded(true);
+          },
+        );
+      } catch (error) {
+        console.error("Error de autenticación con Firebase:", error);
+        pushNotification(
+          "error",
+          "No se pudo autenticar con Firebase. Usando datos locales si existen.",
+        );
+        loadEmployeesFromLocalCache();
         setIsLoaded(true);
-      },
-    );
+      }
+    };
 
-    return () => unsubscribe();
+    void connectToFirestore();
+
+    return () => {
+      isMounted = false;
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, []);
 
   // Mantener una copia local como cache/offline
@@ -117,6 +149,7 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
+      await ensureAnonymousAuth();
       await setDoc(doc(employeesCollection, emp.id), emp as DocumentData);
       pushNotification("success", `Empleado ${emp.name} agregado correctamente.`);
       return true;
@@ -136,6 +169,7 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
+      await ensureAnonymousAuth();
       await setDoc(doc(employeesCollection, updated.id), updated as DocumentData, { merge: true });
       pushNotification("success", `Empleado ${updated.name} actualizado correctamente.`);
       return true;
@@ -155,6 +189,7 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
+      await ensureAnonymousAuth();
       await deleteDoc(doc(employeesCollection, id));
       pushNotification("success", `Empleado ${employeeToDelete.name} eliminado.`);
       return true;
