@@ -115,7 +115,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -124,7 +124,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
 
     if (employeeToEdit) {
       // Modo edición
-      const updated = updateEmployee({
+      const updated = await updateEmployee({
         ...employeeToEdit,
         name: form.name,
         department: form.department,
@@ -138,7 +138,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       }
     } else {
       // Modo agregar
-      const added = addEmployee({
+      const added = await addEmployee({
         id: uuidv4(),
         name: form.name,
         department: form.department,
