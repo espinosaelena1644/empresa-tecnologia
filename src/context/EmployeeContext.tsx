@@ -62,10 +62,13 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
         const parsedData = JSON.parse(data);
         console.log("Empleados cargados desde localStorage:", parsedData);
         setEmployees(parsedData);
+        return true;
       }
     } catch (error) {
       console.error("Error leyendo localStorage como fallback:", error);
     }
+
+    return false;
   };
 
   useEffect(() => {
@@ -78,11 +81,28 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Suscribirse a todos los empleados para lectura publica
   useEffect(() => {
+    const hasCachedEmployees = loadEmployeesFromLocalCache();
+    if (hasCachedEmployees) {
+      setIsLoaded(true);
+    }
+
+    const loadingTimeout = window.setTimeout(() => {
+      setIsLoaded((prev) => {
+        if (prev) {
+          return prev;
+        }
+
+        loadEmployeesFromLocalCache();
+        return true;
+      });
+    }, 4000);
+
     const employeesRef = ref(db, "employees");
 
     const unsubscribe = onValue(
       employeesRef,
       (snapshot) => {
+        window.clearTimeout(loadingTimeout);
         const data = snapshot.val();
         if (data) {
           const list = Object.entries(
@@ -103,13 +123,17 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsLoaded(true);
       },
       (error) => {
+        window.clearTimeout(loadingTimeout);
         console.error("Error al cargar empleados desde Firebase:", error);
         loadEmployeesFromLocalCache();
         setIsLoaded(true);
       },
     );
 
-    return () => unsubscribe();
+    return () => {
+      window.clearTimeout(loadingTimeout);
+      unsubscribe();
+    };
   }, []);
 
   // Mantener una copia local publica como cache/offline
