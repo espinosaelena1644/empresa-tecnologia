@@ -1,14 +1,13 @@
 // context/EmployeeContext.tsx
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { type Employee } from "../types/employee";
-import { employeesCollection } from "../config/firebase-config";
+import { db } from "../config/firebase-config";
 import {
-  onSnapshot,
-  setDoc,
-  doc,
-  deleteDoc,
-  type DocumentData,
-} from "firebase/firestore";
+  ref,
+  onValue,
+  set,
+  remove,
+} from "firebase/database";
 
 type NotificationType = "success" | "error";
 
@@ -68,53 +67,30 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  // Suscribirse en tiempo real a Firestore y usar localStorage como fallback
+  // Suscribirse en tiempo real a Realtime Database y usar localStorage como fallback
   useEffect(() => {
-    let isMounted = true;
-    let unsubscribe: (() => void) | null = null;
+    const employeesRef = ref(db, "employees");
 
-    const connectToFirestore = async () => {
-      try {
-        if (!isMounted) return;
-
-        unsubscribe = onSnapshot(
-          employeesCollection,
-          (snapshot) => {
-            const serverEmployees = snapshot.docs.map(
-              (d) => d.data() as Employee,
-            );
-            setEmployees(serverEmployees);
-            setIsLoaded(true);
-          },
-          (error) => {
-            console.error("Error al cargar empleados desde Firestore:", error);
-            pushNotification(
-              "error",
-              "No se pudieron cargar los empleados desde el servidor. Usando datos locales si existen.",
-            );
-            loadEmployeesFromLocalCache();
-            setIsLoaded(true);
-          },
-        );
-      } catch (error) {
-        console.error("Error al conectar con Firebase:", error);
-        pushNotification(
-          "error",
-          "No se pudo conectar con Firebase. Usando datos locales si existen.",
-        );
+    const unsubscribe = onValue(
+      employeesRef,
+      (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          const list = Object.values(data) as Employee[];
+          setEmployees(list);
+        } else {
+          setEmployees([]);
+        }
+        setIsLoaded(true);
+      },
+      (error) => {
+        console.error("Error al cargar empleados desde Firebase:", error);
         loadEmployeesFromLocalCache();
         setIsLoaded(true);
-      }
-    };
+      },
+    );
 
-    void connectToFirestore();
-
-    return () => {
-      isMounted = false;
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
+    return () => unsubscribe();
   }, []);
 
   // Mantener una copia local como cache/offline
@@ -139,17 +115,13 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
-      await setDoc(doc(employeesCollection, emp.id), emp as DocumentData);
+      await set(ref(db, `employees/${emp.id}`), emp);
       pushNotification("success", `Empleado ${emp.name} agregado correctamente.`);
       return true;
     } catch (error) {
-      console.error("Error al agregar empleado en Firestore:", error);
-      setEmployees((prev) => [...prev, emp]);
-      pushNotification(
-        "success",
-        `Empleado ${emp.name} agregado localmente (sin sincronizar).`,
-      );
-      return true;
+      console.error("Error al agregar empleado en Firebase:", error);
+      pushNotification("error", "No se pudo agregar el empleado en el servidor.");
+      return false;
     }
   };
 
@@ -162,19 +134,13 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
-      await setDoc(doc(employeesCollection, updated.id), updated as DocumentData, { merge: true });
+      await set(ref(db, `employees/${updated.id}`), updated);
       pushNotification("success", `Empleado ${updated.name} actualizado correctamente.`);
       return true;
     } catch (error) {
-      console.error("Error al actualizar empleado en Firestore:", error);
-      setEmployees((prev) =>
-        prev.map((emp) => (emp.id === updated.id ? updated : emp)),
-      );
-      pushNotification(
-        "success",
-        `Empleado ${updated.name} actualizado localmente (sin sincronizar).`,
-      );
-      return true;
+      console.error("Error al actualizar empleado en Firebase:", error);
+      pushNotification("error", "No se pudo actualizar el empleado en el servidor.");
+      return false;
     }
   };
 
@@ -187,17 +153,13 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
-      await deleteDoc(doc(employeesCollection, id));
+      await remove(ref(db, `employees/${id}`));
       pushNotification("success", `Empleado ${employeeToDelete.name} eliminado.`);
       return true;
     } catch (error) {
-      console.error("Error al eliminar empleado en Firestore:", error);
-      setEmployees((prev) => prev.filter((emp) => emp.id !== id));
-      pushNotification(
-        "success",
-        `Empleado ${employeeToDelete.name} eliminado localmente (sin sincronizar).`,
-      );
-      return true;
+      console.error("Error al eliminar empleado en Firebase:", error);
+      pushNotification("error", "No se pudo eliminar el empleado en el servidor.");
+      return false;
     }
   };
 

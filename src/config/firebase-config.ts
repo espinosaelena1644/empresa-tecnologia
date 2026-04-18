@@ -1,24 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, collection } from "firebase/firestore";
-
-const requiredEnvVars = [
-  "VITE_FIREBASE_API_KEY",
-  "VITE_FIREBASE_AUTH_DOMAIN",
-  "VITE_FIREBASE_DATABASE_URL",
-  "VITE_FIREBASE_PROJECT_ID",
-  "VITE_FIREBASE_STORAGE_BUCKET",
-  "VITE_FIREBASE_MESSAGING_SENDER_ID",
-  "VITE_FIREBASE_APP_ID",
-] as const;
-
-const missingEnvVars = requiredEnvVars.filter((key) => !import.meta.env[key]);
-
-if (missingEnvVars.length > 0) {
-  throw new Error(
-    `Faltan variables de entorno de Firebase: ${missingEnvVars.join(", ")}`,
-  );
-}
+import { getDatabase, ref } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -33,8 +15,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+const db = getDatabase(app);
+const employeesRef = ref(db, "employees");
 
-const db = getFirestore(app);
-const employeesCollection = collection(db, "employees");
-
-export { app, analytics, db, employeesCollection };
+export { app, analytics, db, employeesRef };
