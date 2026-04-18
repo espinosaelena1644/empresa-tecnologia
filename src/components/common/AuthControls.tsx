@@ -3,6 +3,7 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
+  type User,
   type AuthError,
 } from "firebase/auth";
 import { auth } from "../../config/firebase-config";
@@ -10,6 +11,7 @@ import "./AuthControls.css";
 
 const AuthControls: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [email, setEmail] = useState("");
@@ -18,6 +20,7 @@ const AuthControls: React.FC = () => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
       setIsLoggedIn(Boolean(user));
       if (user) {
         setShowForm(false);
@@ -28,6 +31,23 @@ const AuthControls: React.FC = () => {
 
     return () => unsubscribe();
   }, []);
+
+  const getUserName = () => {
+    if (!currentUser) {
+      return "Usuario";
+    }
+
+    if (currentUser.displayName?.trim()) {
+      return currentUser.displayName.trim();
+    }
+
+    if (currentUser.email) {
+      const [emailName] = currentUser.email.split("@");
+      return emailName || currentUser.email;
+    }
+
+    return "Usuario";
+  };
 
   const mapAuthError = (firebaseError: AuthError) => {
     switch (firebaseError.code) {
@@ -93,16 +113,26 @@ const AuthControls: React.FC = () => {
 
   if (isLoggedIn) {
     return (
-      <button
-        type="button"
-        className="auth-btn auth-btn-logout micro-press"
-        onClick={handleLogout}
-        disabled={isSubmitting}
-        aria-label="Salir"
-        title="Cerrar sesión"
-      >
-        {isSubmitting ? "Saliendo..." : "Salir"}
-      </button>
+      <>
+        <button
+          type="button"
+          className="auth-btn auth-btn-logout micro-press"
+          onClick={handleLogout}
+          disabled={isSubmitting}
+          aria-label="Salir"
+          title="Cerrar sesión"
+        >
+          {isSubmitting ? "Saliendo..." : "Salir"}
+        </button>
+
+        <section
+          className="user-floating-card"
+          aria-label="Usuario autenticado"
+        >
+          <span className="user-floating-label">Sesion activa</span>
+          <strong className="user-floating-name">{getUserName()}</strong>
+        </section>
+      </>
     );
   }
 
