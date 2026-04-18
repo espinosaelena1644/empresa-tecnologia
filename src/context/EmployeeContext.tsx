@@ -134,6 +134,19 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
       return false;
     }
 
+    const getAdminName = () => {
+      if (currentUser.displayName?.trim()) {
+        return currentUser.displayName.trim();
+      }
+
+      if (currentUser.email) {
+        const [emailName] = currentUser.email.split("@");
+        return emailName || "Administrador";
+      }
+
+      return "Administrador";
+    };
+
     if (!emp.name.trim() || !emp.department.trim() || emp.salary <= 0) {
       pushNotification(
         "error",
@@ -143,7 +156,17 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
-      await set(ref(db, `employees/${currentUser.uid}/${emp.id}`), emp);
+      const employeeWithAdmin: Employee = {
+        ...emp,
+        addedByUid: currentUser.uid,
+        addedByName: getAdminName(),
+        addedByEmail: currentUser.email ?? "",
+      };
+
+      await set(
+        ref(db, `employees/${currentUser.uid}/${emp.id}`),
+        employeeWithAdmin,
+      );
       pushNotification(
         "success",
         `Empleado ${emp.name} agregado correctamente.`,
@@ -176,7 +199,18 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
-      await set(ref(db, `employees/${currentUser.uid}/${updated.id}`), updated);
+      const existingEmployee = employees.find((emp) => emp.id === updated.id);
+      const employeeToSave: Employee = {
+        ...updated,
+        addedByUid: existingEmployee?.addedByUid,
+        addedByName: existingEmployee?.addedByName,
+        addedByEmail: existingEmployee?.addedByEmail,
+      };
+
+      await set(
+        ref(db, `employees/${currentUser.uid}/${updated.id}`),
+        employeeToSave,
+      );
       pushNotification(
         "success",
         `Empleado ${updated.name} actualizado correctamente.`,

@@ -10,6 +10,19 @@ const EmployeeItem: React.FC<{ employee: Employee }> = ({ employee }) => {
   const { deleteEmployee } = useEmployees();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  const getAddedBy = () => {
+    if (employee.addedByName?.trim()) {
+      return employee.addedByName;
+    }
+
+    if (employee.addedByEmail) {
+      const [emailName] = employee.addedByEmail.split("@");
+      return emailName || employee.addedByEmail;
+    }
+
+    return "No disponible";
+  };
+
   const handleEditComplete = () => {
     setIsEditModalOpen(false);
   };
@@ -56,6 +69,10 @@ const EmployeeItem: React.FC<{ employee: Employee }> = ({ employee }) => {
             <div className="info-item">
               <span className="info-label">Fin</span>
               <span className="info-value">{employee.endDate}</span>
+            </div>
+            <div className="info-item">
+              <span className="info-label">Agregado por</span>
+              <span className="info-value">{getAddedBy()}</span>
             </div>
           </div>
         </div>
