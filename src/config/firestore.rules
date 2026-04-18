@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /employees/{employeeId} {
+      // Sin autenticación: lectura y borrado permitidos
+      // Escrituras validadas para evitar datos corruptos
+      allow read: if true;
+      allow create: if validEmployee(request.resource.data);
+      allow update: if validEmployee(request.resource.data);
+      allow delete: if true;
+
+      function validEmployee(data) {
+        // campos obligatorios
+        return data.keys().hasAll(['id','name','department','salary']) &&
+          // tipos y límites básicos
+          data.id is string &&
+          data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+          data.department is string && data.department.size() > 0 && data.department.size() <= 100 &&
+          data.salary is number && data.salary >= 0;
+      }
+    }
+
+    // Bloquear todo lo demás por defecto
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

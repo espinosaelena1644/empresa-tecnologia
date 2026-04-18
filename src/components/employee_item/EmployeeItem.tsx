@@ -28,8 +28,8 @@ const EmployeeItem: React.FC<{ employee: Employee }> = ({ employee }) => {
               ✏️
             </button>
             <button
-              onClick={() => {
-                deleteEmployee(employee.id);
+              onClick={async () => {
+                await deleteEmployee(employee.id);
               }}
               className="futuristic-delete-btn micro-press"
               title="Eliminar empleado"
