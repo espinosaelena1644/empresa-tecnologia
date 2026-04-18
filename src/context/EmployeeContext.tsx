@@ -37,7 +37,7 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const getCacheKey = () => "employees:public";
+  // const getCacheKey = () => "employees:public";
 
   const removeNotification = (id: string) => {
     setNotifications((prev) =>
@@ -56,17 +56,18 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const loadEmployeesFromLocalCache = () => {
-    try {
-      const data = localStorage.getItem(getCacheKey());
-      if (data) {
-        const parsedData = JSON.parse(data);
-        console.log("Empleados cargados desde localStorage:", parsedData);
-        setEmployees(parsedData);
-        return true;
-      }
-    } catch (error) {
-      console.error("Error leyendo localStorage como fallback:", error);
-    }
+    // localStorage disabled by requirement.
+    // try {
+    //   const data = localStorage.getItem(getCacheKey());
+    //   if (data) {
+    //     const parsedData = JSON.parse(data);
+    //     console.log("Empleados cargados desde localStorage:", parsedData);
+    //     setEmployees(parsedData);
+    //     return true;
+    //   }
+    // } catch (error) {
+    //   console.error("Error leyendo localStorage como fallback:", error);
+    // }
 
     return false;
   };
@@ -136,17 +137,17 @@ export const EmployeeProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, []);
 
-  // Mantener una copia local publica como cache/offline
-  useEffect(() => {
-    if (isLoaded) {
-      try {
-        localStorage.setItem(getCacheKey(), JSON.stringify(employees));
-        console.log("Empleados guardados en localStorage:", employees);
-      } catch (error) {
-        console.error("Error al guardar empleados en localStorage:", error);
-      }
-    }
-  }, [employees, isLoaded]);
+  // localStorage disabled by requirement.
+  // useEffect(() => {
+  //   if (isLoaded) {
+  //     try {
+  //       localStorage.setItem(getCacheKey(), JSON.stringify(employees));
+  //       console.log("Empleados guardados en localStorage:", employees);
+  //     } catch (error) {
+  //       console.error("Error al guardar empleados en localStorage:", error);
+  //     }
+  //   }
+  // }, [employees, isLoaded]);
 
   const addEmployee = async (emp: Employee) => {
     if (!currentUser) {
