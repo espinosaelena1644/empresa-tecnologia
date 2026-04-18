@@ -1,0 +1,13 @@
+{
+  "rules": {
+    "employees": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        "$employeeId": {
+          ".validate": "newData.hasChildren(['id', 'name', 'department', 'salary']) && newData.child('id').isString() && newData.child('id').val() === $employeeId && newData.child('name').isString() && newData.child('name').val().length > 0 && newData.child('name').val().length <= 100 && newData.child('department').isString() && newData.child('department').val().length > 0 && newData.child('department').val().length <= 100 && newData.child('salary').isNumber() && newData.child('salary').val() >= 0"
+        }
+      }
+    }
+  }
+}
