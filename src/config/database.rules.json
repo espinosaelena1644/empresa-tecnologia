@@ -3,9 +3,9 @@
     "employees": {
       "$uid": {
         ".read": "auth != null && auth.uid === $uid",
-        ".write": "auth != null", 
+        ".write": "auth != null",
         "$employeeId": {
-          ".validate": "newData.hasChildren(['id', 'name', 'department', 'salary']) && newData.child('id').isString() && newData.child('id').val() === $employeeId && newData.child('name').isString() && newData.child('name').val().length > 0 && newData.child('name').val().length <= 100 && newData.child('department').isString() && newData.child('department').val().length > 0 && newData.child('department').val().length <= 100 && newData.child('salary').isNumber() && newData.child('salary').val() >= 0"
+          ".validate": "newData.hasChildren(['id', 'name', 'department', 'salary']) && newData.child('id').isString() && newData.child('id').val() === $employeeId && newData.child('name').isString() && newData.child('name').val().length > 0 && newData.child('name').val().length <= 100 && newData.child('department').isString() && newData.child('department').val().length > 0 && newData.child('department').val().length <= 100 && newData.child('salary').isNumber() && newData.child('salary').val() >= 0 && (!newData.child('addedByUid').exists() || newData.child('addedByUid').isString()) && (!newData.child('addedByName').exists() || (newData.child('addedByName').isString() && newData.child('addedByName').val().length > 0 && newData.child('addedByName').val().length <= 120)) && (!newData.child('addedByEmail').exists() || newData.child('addedByEmail').isString())"
         }
       }
     }
